@@ -1,0 +1,8 @@
+.DS_Store
+.cache
+node_modules
+static
+.env
+.vscode
+*.log
+notes.md

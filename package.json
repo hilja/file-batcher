@@ -1,0 +1,43 @@
+{
+  "author": "Antti Hilja",
+  "description": "Treat static files as a database",
+  "license": "ISC",
+  "main": "index.js",
+  "name": "fake-db",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node --experimental-modules examples/test-runner.mjs",
+    "test": "jest spec.js --config=jest.config.js",
+    "jest": "jest"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.2",
+    "is-hidden": "^1.1.2",
+    "js-yaml": "^3.13.1",
+    "lodash.get": "^4.4.2",
+    "metro-memory-fs": "^0.55.0",
+    "trash": "^6.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
+    "babel-jest": "^24.8.0",
+    "babel-polyfill": "^6.26.0",
+    "clean-slate-lint": "^1.0.9",
+    "jest": "^24.8.0",
+    "mkdirp": "^0.5.1"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "jest": true
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "./node_modules/.bin/clean-slate-lint",
+      "pre-rewrite": "./node_modules/.bin/clean-slate-lint"
+    }
+  }
+}
