@@ -1,20 +1,19 @@
-import { writeSync, read } from '../index.js'
+// import glob from 'glob'
+import { bulkEdit } from '../index.js'
+
+// const foo = glob.sync('test-stuff/test-content/**')
+
+const allPosts = bulkEdit('test-stuff/test-content/**')
+
 ;(async () => {
-  const files = await read([
-    './test-stuff/test-content/articles/abandoned-euro-star-train.md',
-    './test-stuff/test-content/drafts/albino-raven.md'
-  ])
+  await allPosts(({ goods, actions }) => {
+    const { date } = goods.data
+    // goods.data.date = date + ' foo'
+    // goods.data.date = date.replace(' foo', '')
+    goods.data.date = date.trim()
 
-  files.map(file => {
-    const { date } = file.data
-    // Edit the date, for example
-    file.data.date = date && date + ' foobar'
+    actions.save(goods)
 
-    // Change the date back to what it was
-    // file.data.date = date && date.replace(' foobar', '')
-
-    console.log(file)
-
-    writeSync(file.path, file)
+    console.log(goods)
   })
 })()
