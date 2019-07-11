@@ -13,7 +13,7 @@ jest.mock('fs', () => new (require('metro-memory-fs'))())
 // Populate the `createFiles` with the mocked `fs`
 const mockFiles = createFiles(fs)
 
-describe('read', () => {
+describe('read:', () => {
   beforeEach(() => {
     fs.reset()
     mockFiles({
@@ -28,33 +28,16 @@ describe('read', () => {
     })
   })
 
+  it('should read a folder file', async () => {
+    const actual = await read(path + '/*')
+    const expected = [markdownJSON('bar.md'), markdownJSON()]
+
+    expect(actual).toEqual(expected)
+  })
+
   it('should read a single file', async () => {
     const actual = await read(path + '/foo.md')
-    const expected = markdownJSON()
-
-    expect(actual).toEqual(expected)
-  })
-
-  it('should read a folder file', async () => {
-    const actual = await read(path)
-    const expected = [markdownJSON(), markdownJSON('bar.md')]
-
-    expect(actual).toEqual(expected)
-  })
-
-  it('should read an array of files', async () => {
-    const actual = await read([path + '/foo.md', path + '/bar.md'])
-    const expected = [markdownJSON(), markdownJSON('bar.md')]
-
-    expect(actual).toEqual(expected)
-  })
-
-  it('should read an array of directories', async () => {
-    const actual = await read([path, path2])
-    const expected = [
-      [markdownJSON(), markdownJSON('bar.md')],
-      [markdownJSON(undefined, path2), markdownJSON('bar.md', path2)]
-    ]
+    const expected = [markdownJSON()]
 
     expect(actual).toEqual(expected)
   })

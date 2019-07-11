@@ -1,6 +1,6 @@
+import glob from 'glob'
 import isMarkdownFile from '../../helpers/is-markdown-file/index.mjs'
 import readFile from '../../helpers/read-file/index.mjs'
-import readDirectory from '../../helpers/read-directory/index.mjs'
 import getPath from '../../helpers/get-path/index.mjs'
 
 /**
@@ -9,22 +9,23 @@ import getPath from '../../helpers/get-path/index.mjs'
  *
  * @param {string|array} location Path to the file or folder.
  */
-const read = async locations => {
-  const isMultiple = Array.isArray(locations)
+const read = async globPattern => {
+  const files = glob.sync(globPattern)
 
   try {
-    return isMultiple
-      ? Promise.all(locations.map(_handleFile))
-      : _handleFile(locations)
+    const handledFiles = await Promise.all(files.map(_handleFile))
+    const allFiles = handledFiles.filter(Boolean)
+
+    return allFiles.flat()
   } catch (error) {
     console.error(error)
   }
 }
 
-const _handleFile = location => {
-  const path = getPath(location)
+const _handleFile = file => {
+  const path = getPath(file)
 
-  return isMarkdownFile(path) ? readFile(path) : readDirectory(path)
+  return isMarkdownFile(path) ? readFile(path) : undefined
 }
 
 export default read
