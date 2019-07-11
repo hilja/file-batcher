@@ -7,11 +7,12 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "start": "node --experimental-modules examples/test-runner.mjs",
+    "start": "node --experimental-modules examples/bulk-edit.mjs",
     "test": "jest spec.js --config=jest.config.js",
     "jest": "jest"
   },
   "dependencies": {
+    "glob": "^7.1.4",
     "gray-matter": "^4.0.2",
     "is-hidden": "^1.1.2",
     "js-yaml": "^3.13.1",
