@@ -25,7 +25,7 @@ describe('writeSync:', () => {
   })
 
   it('should write JSON into a markdown file synchronously', () => {
-    writeSync(mockPath + '/foo.md', MOCK_JSON)
+    writeSync(mockPath + '/foo.md')(MOCK_JSON)
 
     const actual = fs.readFileSync(path.join(mockPath, 'foo.md'), 'utf8')
     const expected = markdown
@@ -34,7 +34,7 @@ describe('writeSync:', () => {
   })
 
   it('should write JSON into a markdown file asynchronously', async () => {
-    await write(mockPath + '/foo.md', MOCK_JSON)
+    await write(mockPath + '/foo.md')(MOCK_JSON)
 
     const actual = fs.readFileSync(path.join(mockPath, 'foo.md'), 'utf8')
     const expected = markdown

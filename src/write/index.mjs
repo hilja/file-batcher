@@ -14,7 +14,7 @@ const writeFile = promisify(fs.writeFile)
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
-export const writeSync = (file, data, options = {}) => {
+export const writeSync = file => (data, options = {}) => {
   const opts = _getOptions(options)
   const path = getPath(file)
 
@@ -33,7 +33,7 @@ export const writeSync = (file, data, options = {}) => {
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
-export const write = async (file, data, options = {}) => {
+export const write = file => async (data, options = {}) => {
   const opts = _getOptions(options)
   const path = getPath(file)
 
