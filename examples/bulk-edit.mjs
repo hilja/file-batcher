@@ -1,19 +1,24 @@
-// import glob from 'glob'
 import { bulkEdit } from '../index.js'
 
-// const foo = glob.sync('test-stuff/test-content/**')
-
-const allPosts = bulkEdit('test-stuff/test-content/**')
+const allArticles = bulkEdit('test-stuff/test-content/**')
 
 ;(async () => {
-  await allPosts(({ goods, actions }) => {
-    const { date } = goods.data
-    // goods.data.date = date + ' foo'
-    // goods.data.date = date.replace(' foo', '')
-    goods.data.date = date.trim()
+  await allArticles(({ goods, actions }) => {
+    // Grab the tools you need
+    const { update, save } = actions
+    // And the goods you're going to use
+    const { author } = goods.data
 
-    actions.save(goods)
+    if (author) {
+      // Update the author name with the provided immutability-helper, it gives
+      // you a nice syntax for updating complex shapes. The update function is
+      // prepopulated with the data (goods) from the post, so you don't have to.
+      const newData = update({
+        data: { author: { $set: 'Slartibartfast' } }
+      })
 
-    console.log(goods)
+      // At the end you can save your post with the new data
+      save(newData)
+    }
   })
 })()
