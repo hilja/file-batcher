@@ -28,9 +28,4 @@ labels:
   - girl
   - interaction
   - long hair
-spice:
-  adult: VERY_UNLIKELY
-  spoof: VERY_LIKELY
-  medical: VERY_UNLIKELY
-  violence: VERY_UNLIKELY
 ---

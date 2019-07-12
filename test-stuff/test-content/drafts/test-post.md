@@ -1,5 +1,5 @@
 ---
-title: shit
+title: Test post
 date: '2000-01-01'
 categories:
   - foo
