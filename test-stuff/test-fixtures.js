@@ -1,3 +1,4 @@
+export const basePath = `${process.env.PWD}/test-stuff/test-content`
 export const path = `${process.env.PWD}/test-stuff/test-content/articles`
 export const path2 = `${process.env.PWD}/test-stuff/test-content/drafts`
 
