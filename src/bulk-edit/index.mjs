@@ -2,7 +2,7 @@ import { writeSync } from '../write/index.mjs'
 import read from '../read/index.mjs'
 import update from 'immutability-helper'
 
-const bulkEdit = locations => async callback => {
+const bulkEdit = async (locations, callback) => {
   const allData = await read(locations)
 
   return allData.map(goods => {

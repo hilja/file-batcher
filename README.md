@@ -34,14 +34,11 @@ Hello!
 
 Then we can edit them like so:
 
-```js
+```javascript
 import { bulkEdit } from '../index.js'
-
-// Glob the curried function with the markdown files you need
-const allArticles = bulkEdit('content/articles/*')
-
 ;(async () => {
-  await allArticles(({ goods, actions }) => {
+  // Blog in the files you need
+  await bulkEdit('test-stuff/test-content/**', ({ goods, actions }) => {
     // Grab the tools you need
     const { update, save } = actions
     // And the goods you're going to use

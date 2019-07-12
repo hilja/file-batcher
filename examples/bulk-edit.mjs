@@ -1,9 +1,6 @@
 import { bulkEdit } from '../index.js'
-
-const allArticles = bulkEdit('test-stuff/test-content/**')
-
 ;(async () => {
-  await allArticles(({ goods, actions }) => {
+  await bulkEdit('test-stuff/test-content/**', ({ goods, actions }) => {
     // Grab the tools you need
     const { update, save } = actions
     // And the goods you're going to use
