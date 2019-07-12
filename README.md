@@ -126,7 +126,7 @@ const newData = update({
 })
 ```
 
-See more [advanced examples in the `immutability-helper` dics](https://github.com/kolodny/immutability-helper#update).
+See more [advanced examples in the `immutability-helper` docs](https://github.com/kolodny/immutability-helper#update).
 
 ###### args.actions.index
 
