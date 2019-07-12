@@ -1,13 +1,13 @@
 # Front matter bulk editor
 
-This package gives you few tool to edit Frontmatter fueled Markdown files, the stuff that most static site generators use. It's basically convenience wrapper around and the (gray-matter)[https://www.npmjs.com/package/gray-matter] package.
+This package gives you few tool to edit Frontmatter fueled Markdown files, the stuff that most static site generators use. It's basically convenience wrapper around and the [gray-matter](https://www.npmjs.com/package/gray-matter) package.
 
 ## Features
 
 - Is asynchronous.
 - Uses glob.
 - Can do bulk edits without you writing any code.
-- Provides a sane API ((`immutability-helper`)[https://github.com/kolodny/immutability-helper#update]) to edit the data in the posts.
+- Provides a sane API ([`immutability-helper`](https://github.com/kolodny/immutability-helper#update)) to edit the data in the posts.
 - The `remove` method doesn't delete the files, but chugs them into the trash.
 - Exposes `read`, `write`, and `remove` methods to edit individual posts.
 - Is probably fast.
@@ -76,7 +76,7 @@ Doesn't return anything, you just do stuff inside the callback.
 
 Type: `string`
 
-Uses (glob)[https://www.npmjs.com/package/glob].
+Uses [glob](https://www.npmjs.com/package/glob).
 
 #### callback(args)
 
@@ -88,7 +88,7 @@ Type: `object`
 
 Type: `object`
 
-The JSON from the iterated file, provided by (gray-matter)[https://www.npmjs.com/package/gray-matter].
+The JSON from the iterated file, provided by [gray-matter](https://www.npmjs.com/package/gray-matter).
 
 It has the following shape:
 
@@ -116,7 +116,7 @@ Actions has all the tools you need to edit the files.
 
 Type: `function`
 
-This is a prepopulated (`immutability-helper`)[https://github.com/kolodny/immutability-helper#update].
+This is a prepopulated [`immutability-helper`](https://github.com/kolodny/immutability-helper#update).
 
 You can use it inside the callback like so:
 
@@ -126,7 +126,7 @@ const newData = update({
 })
 ```
 
-See more (advanced examples in the `immutability-helper` dics)[https://github.com/kolodny/immutability-helper#update].
+See more [advanced examples in the `immutability-helper` dics](https://github.com/kolodny/immutability-helper#update).
 
 ###### args.actions.index
 
@@ -138,7 +138,7 @@ The index of the current iteration.
 
 Type: `array`
 
-The full, original array the iteration is part of, it's basically the (third parameter of the `Array.prototype.map()`)[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map].
+The full, original array the iteration is part of, it's basically the [third parameter of the `Array.prototype.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
 
 ### read(pattern)
 
@@ -150,7 +150,7 @@ Returns a `Promise<object[]>` of the markdown files given.
 
 Type: `string`
 
-Uses (glob)[https://www.npmjs.com/package/glob].
+Uses [glob](https://www.npmjs.com/package/glob).
 
 ### remove(path, options)
 
@@ -164,7 +164,7 @@ Type: `string`
 
 Type: `object`
 
-Options to pass to the underlying library (`trash`)[https://www.npmjs.com/package/trash].
+Options to pass to the underlying library [`trash`](https://www.npmjs.com/package/trash).
 
 ### write(file)(data, options)
 
@@ -196,7 +196,7 @@ An object of data to write into a file, in a following format:
 
 Type: `object`
 
-Options passed to the (`gray-matter`'s `stringify` method)[https://www.npmjs.com/package/gray-matter#stringify].
+Options passed to the [`gray-matter`'s `stringify` method](https://www.npmjs.com/package/gray-matter#stringify).
 
 ### writeSync(file)(data, options)
 
