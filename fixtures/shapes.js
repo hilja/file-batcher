@@ -1,6 +1,6 @@
-export const basePath = `${process.env.PWD}/test-stuff/test-content`
-export const path = `${process.env.PWD}/test-stuff/test-content/articles`
-export const path2 = `${process.env.PWD}/test-stuff/test-content/drafts`
+export const basePath = `${process.env.PWD}/fixtures/test-content`
+export const path = `${process.env.PWD}/fixtures/test-content/articles`
+export const path2 = `${process.env.PWD}/fixtures/test-content/drafts`
 
 export const markdown = `---
 title: foo

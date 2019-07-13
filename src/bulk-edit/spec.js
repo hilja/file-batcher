@@ -5,8 +5,8 @@ const {
   basePath,
   markdown,
   markdownJSON
-} = require('../../test-stuff/test-fixtures')
-const createFiles = require('../../test-stuff/create-files')
+} = require('../../fixtures/shapes')
+const createFiles = require('../../fixtures/create-files')
 const bulkEdit = require('./')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())

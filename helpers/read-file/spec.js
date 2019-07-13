@@ -1,11 +1,7 @@
 const fs = require('fs')
 const readFile = require('./')
-const {
-  path,
-  markdown,
-  markdownJSON
-} = require('../../test-stuff/test-fixtures')
-const createFiles = require('../../test-stuff/create-files')
+const { path, markdown, markdownJSON } = require('../../fixtures/shapes')
+const createFiles = require('../../fixtures/create-files')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
 
@@ -23,7 +19,7 @@ describe('readFile', () => {
   })
 
   it('should read a file and parse its contents into JSON', () => {
-    const actual = readFile('test-stuff/test-content/articles/foo.md')
+    const actual = readFile('fixtures/test-content/articles/foo.md')
     const expected = markdownJSON()
 
     expect(actual).toEqual(expected)

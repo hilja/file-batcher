@@ -1,6 +1,6 @@
 const { bulkEdit } = require('..')
 
-bulkEdit('test-stuff/test-content/**', ({ goods, actions }) => {
+bulkEdit('fixtures/test-content/**', ({ goods, actions }) => {
   // Grab the tools you need
   const { update, save } = actions
   // And the goods you're going to use

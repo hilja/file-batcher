@@ -1,11 +1,7 @@
 const fs = require('fs')
 const readDirectory = require('./')
-const {
-  path,
-  markdown,
-  markdownJSON
-} = require('../../test-stuff/test-fixtures')
-const createFiles = require('../../test-stuff/create-files')
+const { path, markdown, markdownJSON } = require('../../fixtures/shapes')
+const createFiles = require('../../fixtures/create-files')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
 

@@ -4,5 +4,5 @@ module.exports = {
   transform: {
     '^.+.m?js$': 'babel-jest'
   },
-  setupFiles: ['<rootDir>/test-stuff/jest.init.js']
+  setupFiles: ['<rootDir>/fixtures/jest.init.js']
 }

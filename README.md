@@ -40,7 +40,7 @@ We can edit them like so:
 ```js
 import { bulkEdit } from '../index.js'
 ;(async () => {
-  await bulkEdit('test-stuff/test-content/**', ({ goods, actions }) => {
+  await bulkEdit('fixtures/test-content/**', ({ goods, actions }) => {
     // Grab the tools you need
     const { update, save } = actions
     // And the goods you're going to use
