@@ -29,38 +29,58 @@ describe('bulkEdit:', () => {
     })
   })
 
-  it('should have index in the callback', () => {
-    bulkEdit(path + '/*', ({ index }) => {
-      expect(typeof index).toBe('number')
-    })
+  it('should bail with undefined if no glob pattern was given', () => {
+    expect(bulkEdit()).toBeUndefined()
   })
 
-  it('should contain the data from the iterated file', () => {
-    bulkEdit(path + '/*', ({ goods, index }) => {
-      if (index === 1) {
-        expect(goods).toEqual(markdownJSON())
-      } else expect(goods).toEqual(markdownJSON('bar.md'))
-    })
+  it('should throw if now callback was given', () => {
+    expect(() => {
+      bulkEdit(path + '/*')
+    }).toThrow()
   })
 
-  it('should have the needed actions', () => {
-    bulkEdit(path + '/*', ({ actions }) => {
-      expect(typeof actions).toBe('object')
-      expect(typeof actions.update).toBe('function')
-      expect(typeof actions.save).toBe('function')
-      expect(typeof actions.remove).toBe('function')
+  describe('callback', () => {
+    it('should have index arg', () => {
+      bulkEdit(path + '/*', ({ index }) => {
+        expect(typeof index).toBe('number')
+      })
     })
-  })
 
-  it('should have the original array around', () => {
-    bulkEdit(path + '/*', ({ index, originalArray }) => {
-      expect(originalArray.length).toBe(2)
+    it('should contain the data from the iterated file', () => {
+      bulkEdit(path + '/*', ({ goods, index }) => {
+        if (index === 1) {
+          expect(goods).toEqual(markdownJSON())
+        } else expect(goods).toEqual(markdownJSON('bar.md'))
+      })
     })
-  })
 
-  it('should not include the parent directories when globbing greedily', () => {
-    bulkEdit(basePath + '/**', ({ index, originalArray }) => {
-      expect(originalArray.length).toBe(4)
+    it('should have the needed actions', () => {
+      bulkEdit(path + '/*', ({ actions }) => {
+        expect(typeof actions).toBe('object')
+        expect(typeof actions.update).toBe('function')
+        expect(typeof actions.save).toBe('function')
+        expect(typeof actions.remove).toBe('function')
+      })
+    })
+
+    it('should have the original array', () => {
+      bulkEdit(path + '/*', ({ originalArray }) => {
+        expect(originalArray.length).toBe(2)
+      })
+    })
+
+    it('shouldn’t include parent directories when globbing greedily', () => {
+      bulkEdit(basePath + '/**', ({ originalArray }) => {
+        expect(originalArray.length).toBe(4)
+      })
+    })
+
+    it('should throw error if wrong data was given when saving', () => {
+      bulkEdit(basePath + '/**', ({ actions }) => {
+        expect(() => {
+          actions.save({})
+        }).toThrow()
+      })
     })
   })
 })

@@ -4,6 +4,14 @@ const remove = require('../remove')
 const update = require('immutability-helper')
 
 const bulkEdit = (globPattern, callback) => {
+  if (!globPattern) {
+    return
+  }
+
+  if (typeof callback !== 'function') {
+    throw new Error('You need to provide the callback')
+  }
+
   const allData = read.sync(globPattern)
 
   return allData.map((goods, index, originalArray) => {
