@@ -9,23 +9,35 @@ import getPath from '../../helpers/get-path/index.mjs'
  *
  * @param {string|array} location Path to the file or folder.
  */
-const read = async globPattern => {
+export const read = async globPattern => {
   const files = glob.sync(globPattern)
 
   try {
-    const handledFiles = await Promise.all(files.map(_handleFile))
-    const allFiles = handledFiles.filter(Boolean)
+    const parsedFiles = await Promise.all(_handleFiles(files))
 
-    return allFiles.flat()
+    return parsedFiles
   } catch (error) {
     console.error(error)
   }
 }
 
-const _handleFile = file => {
-  const path = getPath(file)
+export const readSync = globPattern => {
+  const files = glob.sync(globPattern)
 
-  return isMarkdownFile(path) ? readFile(path) : undefined
+  try {
+    return _handleFiles(files)
+  } catch (error) {
+    console.error(error)
+  }
 }
+
+const _handleFiles = files =>
+  files
+    .map(_handleFile)
+    .filter(Boolean)
+    .flat()
+
+const _handleFile = file =>
+  isMarkdownFile(getPath(file)) ? readFile(getPath(file)) : undefined
 
 export default read
