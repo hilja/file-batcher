@@ -1,14 +1,16 @@
 import { writeSync } from '../write/index.mjs'
-import read from '../read/index.mjs'
+import { readSync } from '../read/index.mjs'
+import remove from '../remove/index.mjs'
 import update from 'immutability-helper'
 
-const bulkEdit = async (locations, callback) => {
-  const allData = await read(locations)
+const bulkEdit = (globPattern, callback) => {
+  const allData = readSync(globPattern)
 
   return allData.map((goods, index, originalArray) => {
     const actions = {
       save: writeSync(goods.path),
-      update: target => update(goods, target)
+      update: target => update(goods, target),
+      remove: path => remove(path || goods.path)
     }
     const args = { goods, actions, index, originalArray }
 

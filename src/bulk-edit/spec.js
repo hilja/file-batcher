@@ -29,36 +29,37 @@ describe('bulkEdit:', () => {
     })
   })
 
-  it('should have index in the callback', async () => {
-    await bulkEdit(path + '/*', ({ index }) => {
+  it('should have index in the callback', () => {
+    bulkEdit(path + '/*', ({ index }) => {
       expect(typeof index).toBe('number')
     })
   })
 
-  it('should contain the data from the iterated file', async () => {
-    await bulkEdit(path + '/*', ({ goods, index }) => {
+  it('should contain the data from the iterated file', () => {
+    bulkEdit(path + '/*', ({ goods, index }) => {
       if (index === 1) {
         expect(goods).toEqual(markdownJSON())
       } else expect(goods).toEqual(markdownJSON('bar.md'))
     })
   })
 
-  it('should have the needed actions', async () => {
-    await bulkEdit(path + '/*', ({ actions }) => {
+  it('should have the needed actions', () => {
+    bulkEdit(path + '/*', ({ actions }) => {
       expect(typeof actions).toBe('object')
       expect(typeof actions.update).toBe('function')
       expect(typeof actions.save).toBe('function')
+      expect(typeof actions.remove).toBe('function')
     })
   })
 
-  it('should have the original array around', async () => {
-    await bulkEdit(path + '/*', ({ index, originalArray }) => {
+  it('should have the original array around', () => {
+    bulkEdit(path + '/*', ({ index, originalArray }) => {
       expect(originalArray.length).toBe(2)
     })
   })
 
-  it('should not include the parent directories when globbing greedily', async () => {
-    await bulkEdit(basePath + '/**', ({ index, originalArray }) => {
+  it('should not include the parent directories when globbing greedily', () => {
+    bulkEdit(basePath + '/**', ({ index, originalArray }) => {
       expect(originalArray.length).toBe(4)
     })
   })
