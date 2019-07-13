@@ -4,12 +4,10 @@
   "license": "ISC",
   "main": "index.js",
   "name": "fake-db",
-  "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "start": "node --experimental-modules examples/bulk-edit.mjs",
     "test": "jest spec.js --config=jest.config.js",
-    "jest": "jest"
+    "jest": "jest --config=jest.config.js"
   },
   "dependencies": {
     "glob": "^7.1.4",

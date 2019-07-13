@@ -1,7 +1,7 @@
-import remove from './index.mjs'
+const remove = require('./')
 
 // No need to have a separate mock file for it, just calling this is fine
-jest.mock('./index.mjs')
+jest.mock('./index.js')
 
 describe('remove:', () => {
   it('should be called', async () => {

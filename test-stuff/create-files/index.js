@@ -1,5 +1,5 @@
-import path from 'path'
-import mkdirp from 'mkdirp'
+const path = require('path')
+const mkdirp = require('mkdirp')
 
 const mockFiles = (files, dirPath, fs) => {
   for (const key in files) {
@@ -19,4 +19,4 @@ const createFiles = fs => (files, dirPath = '/') => {
   return mockFiles(files, dirPath, fs)
 }
 
-export default createFiles
+module.exports = createFiles

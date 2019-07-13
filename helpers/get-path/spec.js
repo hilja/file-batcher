@@ -1,4 +1,4 @@
-import getPath from './index.mjs'
+const getPath = require('./')
 
 describe('getPath', () => {
   it('should return empty string is empty string was given', () => {

@@ -1,9 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-import readFile from '../read-file/index.mjs'
-import getPath from '../get-path/index.mjs'
-import isMarkdownFile from '../is-markdown-file/index.mjs'
-import { promisify } from 'util'
+const fs = require('fs')
+const path = require('path')
+const readFile = require('../read-file')
+const getPath = require('../get-path')
+const isMarkdownFile = require('../is-markdown-file')
+const { promisify } = require('util')
 
 const readdir = promisify(fs.readdir)
 
@@ -31,4 +31,4 @@ const _handleFile = (directory, file) => {
   return isMarkdownFile(filePath) && readFile(filePath)
 }
 
-export default readDirectory
+module.exports = readDirectory

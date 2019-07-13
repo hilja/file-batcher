@@ -1,6 +1,14 @@
-import bulkEdit from './src/bulk-edit/index.mjs'
-import { read, readAsync } from './src/read/index.mjs'
-import remove from './src/remove/index.mjs'
-import { write, writeSync } from './src/write/index.mjs'
+module.exports.bulkEdit = require('./src/bulk-edit')
+module.exports.read = require('./src/read')
+module.exports.remove = require('./src/remove')
+module.exports.write = require('./src/write')
 
-export { bulkEdit, read, readAsync, remove, write, writeSync }
+// module.exports.bulkEdit = bulkEdit
+
+// module.exports = {
+//   bulkEdit,
+//   remove,
+//   read
+// }
+
+// export { bulkEdit, read, readAsync, remove, write, writeSync }

@@ -1,8 +1,8 @@
-import { write, writeSync } from './index.mjs'
-import path from 'path'
-import fs from 'fs'
-import { path as mockPath, markdown } from '../../test-stuff/test-fixtures'
-import createFiles from '../../test-stuff/create-files'
+const write = require('./')
+const path = require('path')
+const fs = require('fs')
+const { path: mockPath, markdown } = require('../../test-stuff/test-fixtures')
+const createFiles = require('../../test-stuff/create-files')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
 
@@ -25,7 +25,7 @@ describe('writeSync:', () => {
   })
 
   it('should write JSON into a markdown file synchronously', () => {
-    writeSync(mockPath + '/foo.md')(MOCK_JSON)
+    write.sync(mockPath + '/foo.md')(MOCK_JSON)
 
     const actual = fs.readFileSync(path.join(mockPath, 'foo.md'), 'utf8')
     const expected = markdown

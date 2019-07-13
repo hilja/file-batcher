@@ -1,6 +1,6 @@
-import fs from 'fs'
-import path from 'path'
-import isHidden from 'is-hidden'
+const fs = require('fs')
+const path = require('path')
+const isHidden = require('is-hidden')
 
 /**
  * Test if a file is markdown file.
@@ -14,4 +14,4 @@ const isMarkDownFile = file => {
   return /^.+(?:\.md|\.markdown)$/.test(file) && isFile
 }
 
-export default isMarkDownFile
+module.exports = isMarkDownFile

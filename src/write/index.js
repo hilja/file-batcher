@@ -1,8 +1,8 @@
-import fs from 'fs'
-import { promisify } from 'util'
-import matter from 'gray-matter'
-import get from 'lodash.get'
-import getPath from '../../helpers/get-path/index.mjs'
+const fs = require('fs')
+const { promisify } = require('util')
+const matter = require('gray-matter')
+const get = require('lodash.get')
+const getPath = require('../../helpers/get-path')
 
 const writeFile = promisify(fs.writeFile)
 
@@ -14,7 +14,7 @@ const writeFile = promisify(fs.writeFile)
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
-export const writeSync = file => (data, options = {}) => {
+const writeSync = file => (data, options = {}) => {
   const opts = _getOptions(options)
   const path = getPath(file)
 
@@ -33,7 +33,7 @@ export const writeSync = file => (data, options = {}) => {
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
-export const write = file => async (data, options = {}) => {
+const write = file => async (data, options = {}) => {
   const opts = _getOptions(options)
   const path = getPath(file)
 
@@ -55,3 +55,6 @@ const _getOptions = options => ({
   writeFile: options.writeFile || 'utf8',
   stringify: { ...options.stringify }
 })
+
+module.exports = write
+module.exports.sync = writeSync

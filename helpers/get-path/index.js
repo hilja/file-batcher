@@ -1,4 +1,4 @@
-import path from 'path'
+const path = require('path')
 
 /**
  * Gets an absolute path to the current working directory.
@@ -13,4 +13,4 @@ const getPath = file => {
   return path.isAbsolute(file) ? file : path.join(process.env.PWD, file)
 }
 
-export default getPath
+module.exports = getPath

@@ -1,6 +1,6 @@
-import fs from 'fs'
-import isMarkdownFile from './index.mjs'
-import createFiles from '../../test-stuff/create-files'
+const fs = require('fs')
+const isMarkdownFile = require('./')
+const createFiles = require('../../test-stuff/create-files')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
 

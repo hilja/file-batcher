@@ -1,5 +1,5 @@
-import matter from 'gray-matter'
-import getPath from '../../helpers/get-path/index.mjs'
+const matter = require('gray-matter')
+const getPath = require('../../helpers/get-path')
 
 /**
  * Reads the contents of a markdown file.
@@ -17,4 +17,4 @@ const readFile = (file, options = {}) => {
   }
 }
 
-export default readFile
+module.exports = readFile

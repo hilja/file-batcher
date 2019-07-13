@@ -1,13 +1,13 @@
-import fs from 'fs'
-import {
+const fs = require('fs')
+const {
   path,
   path2,
   basePath,
   markdown,
   markdownJSON
-} from '../../test-stuff/test-fixtures'
-import createFiles from '../../test-stuff/create-files'
-import bulkEdit from './index.mjs'
+} = require('../../test-stuff/test-fixtures')
+const createFiles = require('../../test-stuff/create-files')
+const bulkEdit = require('./')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
 

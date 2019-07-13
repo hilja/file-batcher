@@ -1,14 +1,14 @@
-import { writeSync } from '../write/index.mjs'
-import { readSync } from '../read/index.mjs'
-import remove from '../remove/index.mjs'
-import update from 'immutability-helper'
+const write = require('../write')
+const read = require('../read')
+const remove = require('../remove')
+const update = require('immutability-helper')
 
 const bulkEdit = (globPattern, callback) => {
-  const allData = readSync(globPattern)
+  const allData = read.sync(globPattern)
 
   return allData.map((goods, index, originalArray) => {
     const actions = {
-      save: writeSync(goods.path),
+      save: write.sync(goods.path),
       update: target => update(goods, target),
       remove: path => remove(path || goods.path)
     }
@@ -18,4 +18,4 @@ const bulkEdit = (globPattern, callback) => {
   })
 }
 
-export default bulkEdit
+module.exports = bulkEdit

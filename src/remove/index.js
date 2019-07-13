@@ -1,7 +1,7 @@
-import trash from 'trash'
+const trash = require('trash')
 
 const remove = async (path, options = {}) => {
   await trash(path, options)
 }
 
-export default remove
+module.exports = remove

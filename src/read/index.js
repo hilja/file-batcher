@@ -1,7 +1,7 @@
-import glob from 'glob'
-import isMarkdownFile from '../../helpers/is-markdown-file/index.mjs'
-import readFile from '../../helpers/read-file/index.mjs'
-import getPath from '../../helpers/get-path/index.mjs'
+const glob = require('glob')
+const isMarkdownFile = require('../../helpers/is-markdown-file')
+const readFile = require('../../helpers/read-file')
+const getPath = require('../../helpers/get-path')
 
 /**
  * Reads a directory, multiple directories, single file, or multiple single
@@ -9,7 +9,7 @@ import getPath from '../../helpers/get-path/index.mjs'
  *
  * @param {string|array} location Path to the file or folder.
  */
-export const read = async globPattern => {
+const read = async globPattern => {
   const files = glob.sync(globPattern)
 
   try {
@@ -21,7 +21,7 @@ export const read = async globPattern => {
   }
 }
 
-export const readSync = globPattern => {
+const readSync = globPattern => {
   const files = glob.sync(globPattern)
 
   try {
@@ -40,4 +40,5 @@ const _handleFiles = files =>
 const _handleFile = file =>
   isMarkdownFile(getPath(file)) ? readFile(getPath(file)) : undefined
 
-export default read
+module.exports = read
+module.exports.sync = readSync
