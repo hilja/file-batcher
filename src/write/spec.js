@@ -19,6 +19,7 @@ const MOCK_JSON = {
 
 // Populate the `createFiles` with the mocked `fs`
 const mockFiles = createFiles(fs)
+const mockMdFile = path.join(mockPath, 'foo.md')
 
 describe('write:', () => {
   beforeEach(() => {
@@ -27,25 +28,23 @@ describe('write:', () => {
   })
 
   it('should write JSON into a markdown file', async () => {
-    await write(mockPath + '/foo.md')(MOCK_JSON)
+    await write(mockMdFile, MOCK_JSON)
 
-    const actual = fs.readFileSync(path.join(mockPath, 'foo.md'), 'utf8')
+    const actual = fs.readFileSync(mockMdFile, 'utf8')
     const expected = markdown
 
     expect(actual).toBe(expected)
   })
 
   it('should reject the promise if wrong shape of data was given', async () => {
-    await expect(write(mockPath + '/foo.md')({})).rejects.toEqual(
-      Error(ERROR_MESSAGE)
-    )
+    await expect(write(mockMdFile, {})).rejects.toEqual(Error(ERROR_MESSAGE))
   })
 
   describe('write.sync', () => {
     it('should write JSON into a markdown file', () => {
-      write.sync(mockPath + '/foo.md')(MOCK_JSON)
+      write.sync(mockMdFile, MOCK_JSON)
 
-      const actual = fs.readFileSync(path.join(mockPath, 'foo.md'), 'utf8')
+      const actual = fs.readFileSync(mockMdFile, 'utf8')
       const expected = markdown
 
       expect(actual).toBe(expected)
@@ -53,11 +52,11 @@ describe('write:', () => {
 
     it('should throw error if wrong shape of data was given', () => {
       expect(() => {
-        write.sync(mockPath + '/foo.md')({})
+        write.sync(mockMdFile, {})
       }).toThrow()
 
       expect(() => {
-        write.sync(mockPath + '/foo.md')({ data: {} })
+        write.sync(mockMdFile, { data: {} })
       }).toThrow()
     })
   })

@@ -16,7 +16,7 @@ const ERROR_MESSAGE =
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
-const writeSync = file => (data, options = {}) => {
+const writeSync = (file, data, options = {}) => {
   if (!_isGoodData(data)) {
     throw new Error(ERROR_MESSAGE)
   }
@@ -39,7 +39,7 @@ const writeSync = file => (data, options = {}) => {
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
-const write = file => async (data, options = {}) => {
+const write = async (file, data, options = {}) => {
   const path = getPath(file)
   const opts = _getOptions(options)
 
