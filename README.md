@@ -39,29 +39,28 @@ We can edit them like so:
 
 ```js
 import { bulkEdit } from '../index.js'
-;(async () => {
-  await bulkEdit('fixtures/test-content/**', ({ goods, actions }) => {
-    // Grab the tools you need
-    const { update, save } = actions
-    // And the goods you're going to use
-    const { author } = goods.data
 
-    if (author) {
-      // Update the author name with the provided immutability-helper. It gives
-      // you a nice syntax for updating complex shapes. The update function is
-      // prepopulated with the data (goods) from the post, so you don't have to.
-      const newData = update({
-        data: { author: { $set: 'Slartibartfast' } }
-      })
+bulkEdit('content/**', ({ goods, actions }) => {
+  // Grab the tools you need
+  const { update, save } = actions
+  // And the goods you're going to use
+  const { author } = goods.data
 
-      // Or just mutate the original object by hand ¯\_(ツ)_/¯
-      goods.data.author = 'Slartibartfast'
+  if (author) {
+    // Update the author name with the provided immutability-helper. It gives
+    // you a nice syntax for updating complex shapes. The update function is
+    // prepopulated with the data (goods) from the post, so you don't have to.
+    const newData = update({
+      data: { author: { $set: 'Slartibartfast' } }
+    })
 
-      // At the end you can save your post with the new data
-      save(newData)
-    }
-  })
-})()
+    // Or just mutate the original object by hand ¯\_(ツ)_/¯
+    goods.data.author = 'Slartibartfast'
+
+    // At the end you can save your post with the new data
+    save(newData)
+  }
+})
 ```
 
 ## API
@@ -80,6 +79,8 @@ Uses [glob](https://www.npmjs.com/package/glob).
 
 #### callback(args)
 
+The function that's been run on every file.
+
 ##### args
 
 Type: `object`
@@ -88,7 +89,7 @@ Type: `object`
 
 Type: `object`
 
-The JSON from the iterated file, provided by [gray-matter](https://www.npmjs.com/package/gray-matter).
+The object from the iterated file, provided by [gray-matter](https://www.npmjs.com/package/gray-matter).
 
 It has the following shape:
 
@@ -140,17 +141,21 @@ Type: `array`
 
 The full, original array the iteration is part of, it's basically the [third parameter of the `Array.prototype.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
 
-### read(pattern)
+### read(globPattern)
 
-Read in a file and parses the Frontmatter in it.
+Reads in a file asynchronously and parses the Frontmatter in it.
 
 Returns a `Promise<object[]>` of the markdown files given.
 
-#### pattern
+#### globPattern
 
 Type: `string`
 
 Uses [glob](https://www.npmjs.com/package/glob).
+
+### read.sync(globPattern)
+
+Same as [read](##readpattern) by synchronous.
 
 ### remove(path, options)
 
@@ -198,6 +203,6 @@ Type: `object`
 
 Options passed to the [`gray-matter`'s `stringify` method](https://www.npmjs.com/package/gray-matter#stringify).
 
-### writeSync(file)(data, options)
+### write.sync(file)(data, options)
 
 Same as `write` but asynchronous.
