@@ -8,7 +8,7 @@ jest.mock('fs', () => new (require('metro-memory-fs'))())
 // Populate the `createFiles` with the mocked `fs`
 const mockFiles = createFiles(fs)
 
-describe('readFile', () => {
+describe('readFile:', () => {
   beforeEach(() => {
     fs.reset()
     mockFiles({
@@ -18,10 +18,19 @@ describe('readFile', () => {
     })
   })
 
-  it('should read a file and parse its contents into JSON', () => {
-    const actual = readFile('fixtures/test-content/articles/foo.md')
+  it('should read a file and parse its contents into an object', async () => {
+    const actual = await readFile(path + '/foo.md')
     const expected = markdownJSON()
 
     expect(actual).toEqual(expected)
+  })
+
+  describe('.sync:', () => {
+    it('should read a file and parse its contents into an object', () => {
+      const actual = readFile.sync(path + '/foo.md')
+      const expected = markdownJSON()
+
+      expect(actual).toEqual(expected)
+    })
   })
 })
