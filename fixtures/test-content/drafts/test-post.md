@@ -1,6 +1,7 @@
 ---
 title: Test post
 date: '2000-01-01'
+OGImage: 'test-og-image.jpg'
 categories:
   - foo
   - bar
