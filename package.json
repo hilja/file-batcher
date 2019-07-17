@@ -10,6 +10,7 @@
     "jest": "jest --config=jest.config.js"
   },
   "dependencies": {
+    "async": "^3.1.0",
     "glob": "^7.1.4",
     "gray-matter": "^4.0.2",
     "immutability-helper": "^3.0.1",
