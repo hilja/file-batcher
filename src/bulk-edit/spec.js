@@ -1,11 +1,5 @@
 const fs = require('fs')
-const {
-  path,
-  path2,
-  basePath,
-  markdown,
-  markdownJSON
-} = require('../../fixtures/shapes')
+const { path, path2, markdown, markdownJSON } = require('../../fixtures/shapes')
 const createFiles = require('../../fixtures/create-files')
 const bulkEdit = require('./')
 
@@ -40,47 +34,42 @@ describe('bulkEdit:', () => {
   })
 
   describe('callback', () => {
-    it('should have index arg', () => {
-      bulkEdit(path + '/*', ({ index }) => {
-        expect(typeof index).toBe('number')
-      })
+    it('should have index arg', async done => {
+      const afterEach = async ({ index }) => {
+        await expect(typeof index).toBe('number')
+
+        done()
+      }
+
+      bulkEdit(path + '/*', afterEach)
     })
 
-    it('should contain the data from the iterated file', () => {
-      bulkEdit(path + '/*', ({ goods, index }) => {
+    it('should contain the data from the iterated file', done => {
+      const afterEach = async ({ goods, index }) => {
+        // Nuke the buffer
+        delete goods.orig
+
         if (index === 1) {
-          expect(goods).toEqual(markdownJSON())
+          await expect(goods).toEqual(markdownJSON())
         } else expect(goods).toEqual(markdownJSON('bar.md'))
-      })
+
+        done()
+      }
+
+      bulkEdit(path + '/*', afterEach)
     })
 
-    it('should have the needed actions', () => {
-      bulkEdit(path + '/*', ({ actions }) => {
+    it('should have the needed actions', done => {
+      const afterEach = async ({ actions }) => {
         expect(typeof actions).toBe('object')
         expect(typeof actions.update).toBe('function')
         expect(typeof actions.save).toBe('function')
         expect(typeof actions.remove).toBe('function')
-      })
-    })
 
-    it('should have the original array', () => {
-      bulkEdit(path + '/*', ({ originalArray }) => {
-        expect(originalArray.length).toBe(2)
-      })
-    })
+        done()
+      }
 
-    it('shouldn’t include parent directories when globbing greedily', () => {
-      bulkEdit(basePath + '/**', ({ originalArray }) => {
-        expect(originalArray.length).toBe(4)
-      })
-    })
-
-    it('should throw error if wrong data was given when saving', () => {
-      bulkEdit(basePath + '/**', ({ actions }) => {
-        expect(() => {
-          actions.save({})
-        }).toThrow()
-      })
+      bulkEdit(path + '/*', afterEach)
     })
   })
 })
