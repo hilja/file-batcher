@@ -1,6 +1,6 @@
 const fs = require('fs')
-const read = require('./')
-const { path, path2, markdown, markdownJSON } = require('../../fixtures/shapes')
+const read = require('.')
+const { path, markdown, markdownJSON } = require('../../fixtures/shapes')
 const createFiles = require('../../fixtures/create-files')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
@@ -13,34 +13,24 @@ describe('read:', () => {
     fs.reset()
     mockFiles({
       [path]: {
-        'foo.md': markdown,
-        'bar.md': markdown
-      },
-      [path2]: {
-        'foo.md': markdown,
-        'bar.md': markdown
+        'foo.md': markdown
       }
     })
   })
 
-  it('should read a folder of files asynchronously', async () => {
-    const actual = await read(path + '/*')
-    const expected = [markdownJSON('bar.md'), markdownJSON()]
-
-    expect(actual).toEqual(expected)
-  })
-
-  it('should read a single file asynchronously', async () => {
+  it('should read a file and parse its contents into an object', async () => {
     const actual = await read(path + '/foo.md')
-    const expected = [markdownJSON()]
+    const expected = markdownJSON()
 
     expect(actual).toEqual(expected)
   })
 
-  it('should read a folder of files synchronously', () => {
-    const actual = read.sync(path + '/*')
-    const expected = [markdownJSON('bar.md'), markdownJSON()]
+  describe('.sync:', () => {
+    it('should read a file and parse its contents into an object', () => {
+      const actual = read.sync(path + '/foo.md')
+      const expected = markdownJSON()
 
-    expect(actual).toEqual(expected)
+      expect(actual).toEqual(expected)
+    })
   })
 })
