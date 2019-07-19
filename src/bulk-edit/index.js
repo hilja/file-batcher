@@ -5,6 +5,7 @@ const glob = require('glob')
 const read = require('../read')
 const write = require('../write')
 const getPath = require('../../helpers/get-path')
+const isFile = require('../../helpers/is-file')
 const isMarkdownFile = require('../../helpers/is-markdown-file')
 const remove = require('../remove')
 
@@ -36,7 +37,7 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
 
   const files = glob
     .sync(getPath(globPattern))
-    .filter(file => (options.onlyMdFiles ? isMarkdownFile(file) : file))
+    .filter(file => (options.onlyMdFiles ? isMarkdownFile(file) : isFile(file)))
 
   const iteratee = async (path, index, callback) => {
     try {
@@ -57,9 +58,7 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
   // This runs after the map has completed and handles possible errors.
   const done = error => {
     if (error) {
-      console.error(error)
-      return
-      // throw new Error(error)
+      return console.error(error)
     }
 
     if (typeof afterAll === 'function') {
