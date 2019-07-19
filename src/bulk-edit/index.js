@@ -2,7 +2,7 @@ const update = require('immutability-helper')
 const eachOf = require('async/eachOf')
 const eachOfLimit = require('async/eachOfLimit')
 const glob = require('glob')
-const { read } = require('../../')
+const read = require('../read')
 const write = require('../write')
 const getPath = require('../../helpers/get-path')
 const isMarkdownFile = require('../../helpers/is-markdown-file')
@@ -56,7 +56,11 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
 
   // This runs after the map has completed and handles possible errors.
   const done = error => {
-    if (error) throw new Error(error)
+    if (error) {
+      console.error(error)
+      return
+      // throw new Error(error)
+    }
 
     if (typeof afterAll === 'function') {
       return afterAll()
