@@ -2,13 +2,22 @@ const update = require('immutability-helper')
 const eachOf = require('async/eachOf')
 const eachOfLimit = require('async/eachOfLimit')
 const glob = require('glob')
+const { read } = require('../../')
 const write = require('../write')
-const readFile = require('../../helpers/read-file')
 const getPath = require('../../helpers/get-path')
 const isMarkdownFile = require('../../helpers/is-markdown-file')
 const remove = require('../remove')
 
-const bulkEdit = (globPattern, onEach, limit = 5, afterAll) => {
+/**
+ *
+ * @param {string} globPattern A glop pattern, uses `glob`
+ * @param {function} onEach A iterator function to run on each item
+ * @param {function} afterAll A function to execute after the loop has finished
+ * @param {object|int} opts If int, then it's used as a limit the async iterator
+ * @param {int} opts.limit Limit the concurrent runs on the async iterator
+ * @param {boolean} opts.onlyMdFiles Should other files types be read
+ */
+const bulkEdit = (globPattern, onEach, afterAll, opts) => {
   if (!globPattern) {
     return
   }
@@ -17,11 +26,21 @@ const bulkEdit = (globPattern, onEach, limit = 5, afterAll) => {
     throw new Error('The onEach callback must be a function')
   }
 
-  const files = glob.sync(globPattern).filter(isMarkdownFile)
+  const optsIsNum = typeof opts === 'number'
+  const DEFAULTS = {
+    // If opts is number then just use it
+    limit: optsIsNum ? opts : 5,
+    onlyMdFiles: true
+  }
+  const options = { ...DEFAULTS, ...(!optsIsNum ? opts : {}) }
+
+  const files = glob
+    .sync(getPath(globPattern))
+    .filter(file => (options.onlyMdFiles ? isMarkdownFile(file) : file))
 
   const iteratee = async (path, index, callback) => {
     try {
-      const goods = await readFile(getPath(path))
+      const goods = await read(path)
       const actions = {
         save: data => write(goods.path, data),
         update: target => update(goods, target),
@@ -44,10 +63,10 @@ const bulkEdit = (globPattern, onEach, limit = 5, afterAll) => {
     }
   }
 
-  return limit
+  return options.limit
     ? eachOfLimit(
         files,
-        limit,
+        options.limit,
         (path, index, callback) => iteratee(path, index, callback),
         done
       )

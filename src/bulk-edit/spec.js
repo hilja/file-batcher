@@ -14,7 +14,9 @@ describe('bulkEdit:', () => {
     mockFiles({
       [path]: {
         'foo.md': markdown,
-        'bar.md': markdown
+        'bar.md': markdown,
+        'baz.txt': 'foo',
+        '.dotfile': 'bar'
       },
       [path2]: {
         'foo.md': markdown,
@@ -57,6 +59,22 @@ describe('bulkEdit:', () => {
       }
 
       bulkEdit(path + '/*', afterEach)
+    })
+
+    it('should other files than markdown if so specified', done => {
+      const afterEach = async ({ goods, index }) => {
+        if (index === 3) {
+          await expect(goods.path).toEqual(path + '/foo.txt')
+        } else if (index === 4) {
+          await expect(goods.path).toEqual(path + '/.dotfile')
+        }
+
+        done()
+      }
+
+      const options = { onlyMdFiles: false }
+
+      bulkEdit(path + '/*', afterEach, undefined, options)
     })
 
     it('should have the needed actions', done => {
