@@ -10,7 +10,7 @@ const getPath = file => {
     return ''
   }
 
-  return path.isAbsolute(file) ? file : path.join(process.env.PWD, file)
+  return path.isAbsolute(file) ? file : path.resolve(process.env.PWD, file)
 }
 
 module.exports = getPath
