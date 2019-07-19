@@ -16,7 +16,8 @@ describe('bulkEdit:', () => {
         'foo.md': markdown,
         'bar.md': markdown,
         'baz.txt': 'foo',
-        '.dotfile': 'bar'
+        '.dotfile': 'bar',
+        'bar-md': markdown
       },
       [path2]: {
         'foo.md': markdown,
@@ -35,50 +36,52 @@ describe('bulkEdit:', () => {
     }).toThrow()
   })
 
-  describe('callback', () => {
-    it('should have index arg', async done => {
-      const afterEach = async ({ index }) => {
-        await expect(typeof index).toBe('number')
-
-        done()
-      }
-
-      bulkEdit(path + '/*', afterEach)
-    })
-
-    it('should contain the data from the iterated file', done => {
-      const afterEach = async ({ goods, index }) => {
-        // Nuke the buffer
-        delete goods.orig
-
+  describe('onEach callback:', () => {
+    test('should have index arg', done => {
+      const onEach = async ({ index }) => {
         if (index === 1) {
-          await expect(goods).toEqual(markdownJSON())
-        } else expect(goods).toEqual(markdownJSON('bar.md'))
-
-        done()
-      }
-
-      bulkEdit(path + '/*', afterEach)
-    })
-
-    it('should other files than markdown if so specified', done => {
-      const afterEach = async ({ goods, index }) => {
-        if (index === 3) {
-          await expect(goods.path).toEqual(path + '/foo.txt')
-        } else if (index === 4) {
-          await expect(goods.path).toEqual(path + '/.dotfile')
+          expect(typeof index).toBe('number')
         }
 
         done()
       }
 
-      const options = { onlyMdFiles: false }
-
-      bulkEdit(path + '/*', afterEach, undefined, options)
+      bulkEdit(path + '/*', onEach, undefined, 1)
     })
 
-    it('should have the needed actions', done => {
-      const afterEach = async ({ actions }) => {
+    test('should contain the data from the iterated file', done => {
+      const onEach = async ({ goods, index }) => {
+        // Nuke the buffer
+        delete goods.orig
+
+        if (index === 1) {
+          expect(goods).toEqual(markdownJSON())
+        } else {
+          expect(goods).toEqual(markdownJSON('bar.md'))
+        }
+
+        done()
+      }
+
+      bulkEdit(path + '/*', onEach, undefined, 1)
+    })
+
+    test('should read other files than markdown if so specified', done => {
+      const onEach = async ({ goods, index }) => {
+        if (index === 5) {
+          expect(goods.path).toEqual(path + '/bar-md')
+        }
+
+        done()
+      }
+
+      const options = { onlyMdFiles: false, limit: 1 }
+
+      bulkEdit(path + '/*', onEach, undefined, options)
+    })
+
+    test('should have the needed actions', done => {
+      const onEach = async ({ actions }) => {
         expect(typeof actions).toBe('object')
         expect(typeof actions.update).toBe('function')
         expect(typeof actions.save).toBe('function')
@@ -87,7 +90,23 @@ describe('bulkEdit:', () => {
         done()
       }
 
-      bulkEdit(path + '/*', afterEach)
+      bulkEdit(path + '/*', onEach, undefined, 1)
+    })
+  })
+
+  describe('afterAll callback:', () => {
+    test.only('should be called', done => {
+      var foo = false
+      const onEach = () => {}
+      const afterAll = () => {
+        // Uh, I just want to know if thi was called, it doesn't return anything
+        // to test with.
+        foo = true
+        expect(foo).toBeTruthy()
+        done()
+      }
+
+      bulkEdit(path + '/*', onEach, afterAll, 1)
     })
   })
 })
