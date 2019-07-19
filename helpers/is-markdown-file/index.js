@@ -10,8 +10,9 @@ const isHidden = require('is-hidden')
 const isMarkDownFile = file => {
   const isDotFile = isHidden(path.basename(file))
   const isFile = fs.lstatSync(file).isFile() && !isDotFile
+  const regex = /^.+(?:\.md|\.markdown)$/i
 
-  return /^.+(?:\.md|\.markdown)$/.test(file) && isFile
+  return regex.test(file) && isFile
 }
 
 module.exports = isMarkDownFile

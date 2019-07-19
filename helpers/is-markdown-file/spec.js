@@ -7,13 +7,15 @@ jest.mock('fs', () => new (require('metro-memory-fs'))())
 // Populate the `createFiles` with the mocked `fs`
 const mockFiles = createFiles(fs)
 
-describe('isMarkdownFile', () => {
+describe('isMarkdownFile:', () => {
   beforeEach(() => {
     fs.reset()
     mockFiles({
       bar: {
+        '/foo.MD': 'foo',
         '/foo.md': 'foo',
         '/foo.markdown': 'foo',
+        '/foo.MARKDOWN': 'foo',
         '/.foo.md': 'hidden file'
       },
       '/baz.md': {},
@@ -21,12 +23,14 @@ describe('isMarkdownFile', () => {
     })
   })
 
-  it('should return true if `.md` file was given', () => {
+  it('should return true if `.md` or `.MD` file was given', () => {
     expect(isMarkdownFile('/bar/foo.md')).toBeTruthy()
+    expect(isMarkdownFile('/bar/foo.MD')).toBeTruthy()
   })
 
   it('should return true if `.markdown` file was given', () => {
     expect(isMarkdownFile('/bar/foo.markdown')).toBeTruthy()
+    expect(isMarkdownFile('/bar/foo.MARKDOWN')).toBeTruthy()
   })
 
   it('should return false if directory was given', () => {
