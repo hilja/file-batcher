@@ -1,4 +1,4 @@
-# Front matter bulk editor
+# File Batcher
 
 This package gives you few tool to edit Frontmatter fueled Markdown files, the stuff that most static site generators use. It's basically convenience wrapper around and the [gray-matter](https://www.npmjs.com/package/gray-matter) package.
 
@@ -16,7 +16,7 @@ This package gives you few tool to edit Frontmatter fueled Markdown files, the s
 ## Install
 
 ```
-npm i front-matter-bulk-editor
+npm i file-batcher
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ Hello!
 We can edit them like so:
 
 ```js
-import { bulkEdit } from 'front-matter-bulk-editor'
+import { bulkEdit } from 'file-batcher'
 
 // The iterator function
 const onEach = async ({ goods, actions }) => {

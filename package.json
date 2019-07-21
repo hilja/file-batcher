@@ -3,10 +3,10 @@
   "description": "Asynchronous bulk edit utility for Front Matter powered Markdown files",
   "license": "ISC",
   "main": "index.js",
-  "name": "front-matter-bulk-editor",
+  "name": "file-batcher",
   "version": "0.0.1-beta.0",
-  "repository": "https://github.com/hilja/front-matter-bulk-editor",
-  "homepage": "https://github.com/hilja/front-matter-bulk-editor",
+  "repository": "https://github.com/hilja/file-batcher",
+  "homepage": "https://github.com/hilja/file-batcher",
   "keywords": [
     "markdown",
     "front matter",
