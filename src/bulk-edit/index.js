@@ -1,24 +1,23 @@
+const fs = require('fs')
 const update = require('immutability-helper')
 const eachOf = require('async/eachOf')
 const eachOfLimit = require('async/eachOfLimit')
 const glob = require('glob')
 const read = require('../read')
 const write = require('../write')
-const hasFileExtension = require('../../helpers/has-file-extension')
 const getPath = require('../../helpers/get-path')
-const isFile = require('../../helpers/is-file')
 const remove = require('../remove')
 
 /**
+ * Take a glob patterns  and iterates over an array of paths, executing the
+ * asynchronous `onEach` function on every iteration.
  *
- * @param {string} globPattern A glop pattern, uses `glob`
- * @param {function} onEach A iterator function to run on each item
- * @param {function} afterAll A function to execute after the loop has finished
- * @param {object|int} opts If int, then it's used as a limit the async iterator
- * @param {int} opts.limit Limit the concurrent runs on the async iterator
- * @param {boolean} opts.onlyMdFiles Should other files types be read
+ * @param {string} globPattern A glop pattern. Uses [`glob`]{@link https://npmjs.com/package/glob}.
+ * @param {function} onEach A iterator function to run on each item.
+ * @param {function} afterAll A function to execute after the loop has finished.
+ * @param {int} limit Limit the concurrent runs fn the async iterator.
  */
-const bulkEdit = (globPattern, onEach, afterAll, opts) => {
+const bulkEdit = (globPattern, onEach, afterAll, limit) => {
   if (!globPattern) {
     return
   }
@@ -27,22 +26,7 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
     throw new Error('The onEach callback must be a function')
   }
 
-  const optsIsNum = typeof opts === 'number'
-  const DEFAULTS = {
-    // If `opts` is number then just use it.
-    limit: optsIsNum ? opts : 5,
-    // This is the opinionated bit about this lib.
-    fileExtension: '.md|.markdown'
-  }
-  const OPTIONS = { ...DEFAULTS, ...(!optsIsNum ? opts : {}) }
-
-  const files = glob.sync(getPath(globPattern)).filter(file =>
-    // If it's a function, then just chug it straight into filter, gives a high
-    // level of control fo the user, and such.
-    OPTIONS.fileExtension === 'function'
-      ? OPTIONS.fileExtension(file)
-      : hasFileExtension(file, OPTIONS.fileExtension) && isFile(file)
-  )
+  const files = glob.sync(getPath(globPattern)).filter(_isFile)
 
   const iteratee = async (path, index, callback) => {
     try {
@@ -71,10 +55,10 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
     }
   }
 
-  return OPTIONS.limit
+  return limit
     ? eachOfLimit(
         files,
-        OPTIONS.limit,
+        limit,
         (path, index, callback) => iteratee(path, index, callback),
         done
       )
@@ -84,5 +68,7 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
         done
       )
 }
+
+const _isFile = path => fs.lstatSync(path).isFile()
 
 module.exports = bulkEdit

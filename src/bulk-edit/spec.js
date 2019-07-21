@@ -32,7 +32,7 @@ describe('bulkEdit:', () => {
     expect(bulkEdit()).toBeUndefined()
   })
 
-  test('should throw if now callback was given', () => {
+  test('should throw if now `onEach` callback was given', () => {
     expect(() => {
       bulkEdit(path + '/*')
     }).toThrow()
@@ -77,9 +77,7 @@ describe('bulkEdit:', () => {
         done()
       }
 
-      const options = { fileExtension: '.js', limit: 1 }
-
-      bulkEdit(path + '/*', onEach, undefined, options)
+      bulkEdit(path + '/*.js', onEach, undefined, 1)
     })
 
     test('should have the needed actions', done => {
