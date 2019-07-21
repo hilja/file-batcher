@@ -18,6 +18,5 @@ describe('hasFileExtension:', () => {
   test('should not match anything if empty string was given', () => {
     expect(hasFileExtension('foo.md', '')).toBeTruthy()
     expect(hasFileExtension('....swag....', '')).toBeTruthy()
-    // expect(hasFileExtension('foo.markdown', '.md|.markdown')).toBeTruthy()
   })
 })
