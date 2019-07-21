@@ -4,9 +4,9 @@ const eachOfLimit = require('async/eachOfLimit')
 const glob = require('glob')
 const read = require('../read')
 const write = require('../write')
+const hasFileExtension = require('../../helpers/has-file-extension')
 const getPath = require('../../helpers/get-path')
 const isFile = require('../../helpers/is-file')
-const isMarkdownFile = require('../../helpers/is-markdown-file')
 const remove = require('../remove')
 
 /**
@@ -29,25 +29,30 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
 
   const optsIsNum = typeof opts === 'number'
   const DEFAULTS = {
-    // If opts is number then just use it
+    // If `opts` is number then just use it.
     limit: optsIsNum ? opts : 5,
-    onlyMdFiles: true
+    // This is the opinionated bit about this lib.
+    fileExtension: '.md|.markdown'
   }
-  const options = { ...DEFAULTS, ...(!optsIsNum ? opts : {}) }
+  const OPTIONS = { ...DEFAULTS, ...(!optsIsNum ? opts : {}) }
 
-  const files = glob
-    .sync(getPath(globPattern))
-    .filter(file => (options.onlyMdFiles ? isMarkdownFile(file) : isFile(file)))
+  const files = glob.sync(getPath(globPattern)).filter(file =>
+    // If it's a function, then just chug it straight into filter, gives a high
+    // level of control fo the user, and such.
+    OPTIONS.fileExtension === 'function'
+      ? OPTIONS.fileExtension(file)
+      : hasFileExtension(file, OPTIONS.fileExtension) && isFile(file)
+  )
 
   const iteratee = async (path, index, callback) => {
     try {
       const goods = await read(path)
       const actions = {
-        save: data => write(goods.path, data),
         update: target => update(goods, target),
-        remove: path => remove(path || goods.path)
+        save: async data => write(goods.path, data),
+        remove: async path => remove(path || goods.path)
       }
-      const args = { goods, actions, index }
+      const args = { goods, actions, index, files }
 
       return callback(null, await onEach(args))
     } catch (error) {
@@ -66,10 +71,10 @@ const bulkEdit = (globPattern, onEach, afterAll, opts) => {
     }
   }
 
-  return options.limit
+  return OPTIONS.limit
     ? eachOfLimit(
         files,
-        options.limit,
+        OPTIONS.limit,
         (path, index, callback) => iteratee(path, index, callback),
         done
       )
