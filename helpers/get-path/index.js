@@ -3,7 +3,7 @@ const path = require('path')
 /**
  * Gets an absolute path to the current working directory.
  *
- * @param {string} file Path to a file or folder
+ * @param {string} file Path to a file or folder.
  */
 const getPath = file => {
   if (!file) {
