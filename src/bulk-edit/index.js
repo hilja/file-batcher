@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const update = require('immutability-helper')
 const eachOf = require('async/eachOf')
 const eachOfLimit = require('async/eachOfLimit')
@@ -28,13 +29,16 @@ const bulkEdit = (globPattern, onEach, afterAll, limit) => {
 
   const files = glob.sync(getPath(globPattern)).filter(_isFile)
 
-  const iteratee = async (path, index, callback) => {
+  const iteratee = async (filePath, index, callback) => {
     try {
-      const goods = await read(path)
+      const goods = await read(filePath)
+      const dirname = path.dirname(goods.path)
       const actions = {
         update: target => update(goods, target),
-        save: async data => write(goods.path, data),
-        remove: async path => remove(path || goods.path)
+        save: async (data, path = goods.path) => write(path, data),
+        remove: async (path = goods.path) => remove(path),
+        rename: (newPath, oldPath = goods.path) =>
+          fs.renameSync(getPath(oldPath), path.join(dirname, newPath))
       }
       const args = { goods, actions, index, files }
 

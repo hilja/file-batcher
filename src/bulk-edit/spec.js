@@ -80,6 +80,8 @@ describe('bulkEdit:', () => {
       bulkEdit(path + '/*.js', onEach, undefined, 1)
     })
 
+    test.todo('Test all the actions inside the callback.')
+
     test('should have the needed actions', done => {
       const onEach = async ({ actions, index }) => {
         // Test only the first item, that's fine.
@@ -88,6 +90,7 @@ describe('bulkEdit:', () => {
           expect(typeof actions.update).toBe('function')
           expect(typeof actions.save).toBe('function')
           expect(typeof actions.remove).toBe('function')
+          expect(typeof actions.rename).toBe('function')
 
           done()
         }
