@@ -23,7 +23,6 @@
     "glob": "^7.1.4",
     "gray-matter": "^4.0.2",
     "immutability-helper": "^3.0.1",
-    "is-hidden": "^1.1.2",
     "lodash.get": "^4.4.2",
     "metro-memory-fs": "^0.55.0",
     "trash": "^6.0.0"
