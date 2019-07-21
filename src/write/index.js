@@ -5,56 +5,64 @@ const get = require('lodash.get')
 const getPath = require('../../helpers/get-path')
 
 const writeFile = promisify(fs.writeFile)
-const ERROR_MESSAGE =
-  "The data you gave is not the right shape. e.g.: {data: {}, content: ''}"
-
-/**
- * Writes synchronously JSON into a markdown file.
- *
- * @param {string} file Where to write.
- * @param {object} data What to write.
- * @param {object|string} options.writeFile Options for `fs.writeFile`
- * @param {object} options.stringify Options for gray-matter's stringify method
- */
-const writeSync = (file, data, options = {}) => {
-  if (!_isGoodData(data)) {
-    throw new Error(ERROR_MESSAGE)
-  }
-
-  const path = getPath(file)
-  const opts = _getOptions(options)
-
-  try {
-    fs.writeFileSync(path, _stringify(data, opts.stringify), opts.writeFile)
-  } catch (error) {
-    console.error(error)
-  }
-}
 
 /**
  * Writes asynchronously JSON into a markdown file.
  *
  * @param {string} file Where to write.
- * @param {object} data What to write.
+ * @param {object|any} data What to write. A shape that looks Front Matter is stringified into Front Matter.
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
  */
 const write = async (file, data, options = {}) => {
+  if (!file) {
+    return
+  }
+
   const path = getPath(file)
   const opts = _getOptions(options)
 
-  if (!_isGoodData(data)) {
-    return Promise.reject(Error(ERROR_MESSAGE))
+  // If data looks like data Front Matter type of data, then stringify on it.
+  if (_looksLikeFrontMatter(data)) {
+    data = _stringify(data, opts.stringify)
   }
 
   try {
-    await writeFile(path, _stringify(data, opts.stringify), opts.writeFile)
+    await writeFile(path, data, opts.writeFile)
   } catch (error) {
     console.error(error)
   }
 }
 
-const _isGoodData = (obj = {}) =>
+/**
+ * Writes synchronously JSON into a markdown file.
+ *
+ * @param {string} file Where to write.
+ * @param {object|any} data What to write. A shape that looks Front Matter is stringified into Front Matter.
+ * @param {object|string} options.writeFile Options for `fs.writeFile`
+ * @param {object} options.stringify Options for gray-matter's stringify method
+ */
+const writeSync = (file, data, options = {}) => {
+  if (!file) {
+    return
+  }
+
+  const path = getPath(file)
+  const opts = _getOptions(options)
+
+  // If data looks like data Front Matter type of data, then stringify on it.
+  if (_looksLikeFrontMatter(data)) {
+    data = _stringify(data, opts.stringify)
+  }
+
+  try {
+    fs.writeFileSync(path, data, opts.writeFile)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const _looksLikeFrontMatter = (obj = {}) =>
   typeof obj.content === 'string' && typeof obj.data === 'object'
 
 const _stringify = (input, options) => {

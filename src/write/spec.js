@@ -5,10 +5,8 @@ const { path: mockPath, markdown } = require('../../fixtures/shapes')
 const createFiles = require('../../fixtures/create-files')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
-const ERROR_MESSAGE =
-  "The data you gave is not the right shape. e.g.: {data: {}, content: ''}"
 
-const MOCK_JSON = {
+const FRONT_MATTER_OBJECT = {
   content: 'Hello\n',
   data: {
     title: 'foo',
@@ -19,7 +17,7 @@ const MOCK_JSON = {
 
 // Populate the `createFiles` with the mocked `fs`
 const mockFiles = createFiles(fs)
-const mockMdFile = path.join(mockPath, 'foo.md')
+const filePath = path.join(mockPath, 'foo.md')
 
 describe('write:', () => {
   beforeEach(() => {
@@ -27,37 +25,39 @@ describe('write:', () => {
     mockFiles({ [mockPath]: {} })
   })
 
-  it('should write JSON into a markdown file', async () => {
-    await write(mockMdFile, MOCK_JSON)
+  test('should write JSON into a markdown file', async () => {
+    await write(filePath, FRONT_MATTER_OBJECT)
 
-    const actual = fs.readFileSync(mockMdFile, 'utf8')
+    const actual = fs.readFileSync(filePath, 'utf8')
     const expected = markdown
 
     expect(actual).toBe(expected)
   })
 
-  it('should reject the promise if wrong shape of data was given', async () => {
-    await expect(write(mockMdFile, {})).rejects.toEqual(Error(ERROR_MESSAGE))
+  test('should write non Front Matter data into file as is', async () => {
+    await write(filePath, 'foo')
+    const actual = fs.readFileSync(filePath, 'utf8')
+    const expected = 'foo'
+
+    expect(actual).toBe(expected)
   })
 
-  describe('write.sync', () => {
-    it('should write JSON into a markdown file', () => {
-      write.sync(mockMdFile, MOCK_JSON)
+  describe('write.sync:', () => {
+    test('should parse an object into Front Matter and write it to a file', () => {
+      write.sync(filePath, FRONT_MATTER_OBJECT)
 
-      const actual = fs.readFileSync(mockMdFile, 'utf8')
+      const actual = fs.readFileSync(filePath, 'utf8')
       const expected = markdown
 
       expect(actual).toBe(expected)
     })
 
-    it('should throw error if wrong shape of data was given', () => {
-      expect(() => {
-        write.sync(mockMdFile, {})
-      }).toThrow()
+    test('should write non Front Matter data into file as is', () => {
+      write.sync(filePath, 'foo')
+      const actual = fs.readFileSync(filePath, 'utf8')
+      const expected = 'foo'
 
-      expect(() => {
-        write.sync(mockMdFile, { data: {} })
-      }).toThrow()
+      expect(actual).toBe(expected)
     })
   })
 })
