@@ -56,6 +56,7 @@ const onEach = async ({ goods, actions }) => {
 
   // At the end you can save your post with the new data
   await save(newData)
+
   console.log('Just saved:', goods.path)
 }
 
@@ -72,19 +73,19 @@ See [examples](./examples) for more examples.
 
 You've got 4 public methods at your disposal.
 
-### bulkEdit(pattern, callback)
+### bulkEdit(globPattern, onEach, afterAll, options)
 
-Doesn't return anything, you just do stuff inside the callback.
+Doesn't return anything, you just do stuff inside the async `onEach` callback.
 
-#### pattern
+#### globPattern
 
 Type: `string`
 
 Uses [glob](https://www.npmjs.com/package/glob).
 
-#### callback(args)
+#### onEach(args)
 
-The function that's been run on every file.
+The function is run on every iteration.
 
 ##### args
 
@@ -116,13 +117,13 @@ It has the following shape:
 
 Type: `object`
 
-Actions has all the tools you need to edit the files.
+Actions has all the tools you need to edit/save the files.
 
 ###### args.actions.update
 
 Type: `function`
 
-This is a prepopulated [`immutability-helper`](https://github.com/kolodny/immutability-helper#update).
+This is a prepopulated [`immutability-helper`](https://github.com/kolodny/immutability-helper#update). It's just a tool that provides a syntax for editing complex shapes. Using it is completely optional.
 
 You can use it inside the callback like so:
 
@@ -138,31 +139,86 @@ See more [advanced examples in the `immutability-helper` docs](https://github.co
 
 Type: `number`
 
-The index of the current iteration.
+###### args.actions.save(data[, path])
 
-###### args.actions.originalArray
+Type: `function`
 
-Type: `array`
+Saves the file in the current iteration, with the modified data, or whatever.
 
-The full, original array the iteration is part of, it's basically the [third parameter of the `Array.prototype.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
+####### data
 
-### read(globPattern)
+Type: `object`
 
-Reads in a file asynchronously and parses the Frontmatter in it.
+The data to save, in the [upper-mentioned shape](#argsgoods).
 
-Returns a `Promise<object[]>` of the markdown files given.
+Example:
 
-#### globPattern
+```js
+const capitalize = string => string[0].toUpperCase() + string.substring(1)
+
+goods.data.name = capitalize(goods.data.name)
+
+await save(goods)
+```
+
+####### path
 
 Type: `string`
 
-Uses [glob](https://www.npmjs.com/package/glob).
+This helper function is prepopulated with with the current file, so, if you're operating on that file, you don't need to pass in a path. You can, tho, if you want to save it to a new location.
 
-### read.sync(globPattern)
+###### args.actions.remove(path?)
 
-Same as [read](##readpattern) by synchronous.
+Type: `function` Returns: `Promise`
 
-### remove(path, options)
+This one doesn't actually delete anything, but moves it to your computers Trash.
+
+####### Path
+
+Type: `string`
+
+It's prepopulated with the current file, so use this param only if you want to delete another file, that isn't the one in the iteration.
+
+#### args.files
+
+Type: `array`
+
+The original array of files we're looping over.
+
+### read(file)
+
+Returns: `Promise<object>`
+
+Reads in a file asynchronously and returns it's contents. If it's a markdown file, it parses the Frontmatter in it and returns us the the familiar shape:
+
+```
+{
+  content: '',
+  data: {
+    description: 'You literally took a shit in the blender',
+    title: 'Kitchen nightmares'
+  },
+  isEmpty: false,
+  excerpt: '',
+  path: '/path/to/kitchen-nightmares.md'
+}
+```
+
+#### file
+
+Type: `string`
+
+A path to a file. Relative to the current working directory.
+
+### read.sync(file)
+
+Returns: `object`
+
+Same the [async read method](readfile) but sync. Expect that there is `orig` which contains the file as a buffer. The async read method doesn't have that.
+
+### remove(path[, options])
+
+Returns: `Promise`
 
 Moves a given file into your computers trash, where you can then recover it, if you so like.
 
@@ -170,44 +226,40 @@ Moves a given file into your computers trash, where you can then recover it, if 
 
 Type: `string`
 
-#### options
+A path to a file. Relative to the current working directory.
+
+#### options?
 
 Type: `object`
 
 Options to pass to the underlying library [`trash`](https://www.npmjs.com/package/trash).
 
-### write(file)(data, options)
+### write(path, data[, options])
 
-An asynchronous, curried function that takes an object, stringifies it into frontmatter format with gray-matter's `stringify` method. The function is curried so you can prepopulate it if needed.
+An asynchronous function that takes some data and writes it into a file. If the data looks like it's meant to be parsed into a Front Matter, then it is. E.g. it has a shape: `{ content: '', data: {} }`.
 
-#### file
+#### path
 
 Type: `string`
 
-A file path.
+Where to write the data. Relative to the current working directory.
 
 #### data
 
-Type: `object`
+Type: `object|any`
 
-An object of data to write into a file, in a following format:
+If it's an object that has `data` and `content` in it, then it's parsed into Front Matter. Otherwise it's just written into the file as is.
 
-```
-{
-  data: {
-    title: 'foo',
-    description: 'bar'
-  }
-  content: 'Hello'
-}
-```
-
-#### options
+#### options.writeFile
 
 Type: `object`
 
-Options passed to the [`gray-matter`'s `stringify` method](https://www.npmjs.com/package/gray-matter#stringify).
+Options to pass to Node's [`fs.readFile`](https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback).
 
-### write.sync(file)(data, options)
+#### options.stringify
 
-Same as `write` but asynchronous.
+Options to pass to [`gray-matter`'s `stringify` method](https://www.npmjs.com/package/gray-matter#stringify).
+
+### write.sync(path, data[, options])
+
+Same as `write` but synchronous.
