@@ -1,13 +1,22 @@
 # File Batcher
 
-This package gives you few tool to edit Frontmatter fueled Markdown files, the stuff that most static site generators use. It's basically convenience wrapper around and the [gray-matter](https://www.npmjs.com/package/gray-matter) package.
+A slightly opinionated tool to batch process large quantities of files asynchronously. It provides you some convenient tools to edit Front Matter fueled Markdown files (the stuff that most static site generators use). But it's not limited to any given filetype or format.
+
+It could be used for, for example, right at the top my head, to:
+
+- Search and replace from multiple files.
+- To rename a large quantities of files.
+- Find unused packages by scanning source files.
+- Reformatting chunks of text.
+- Analyzing the readability of text in blog posts.
+- Whatever you want, world is your oyster...
 
 ## Features
 
 - Is asynchronous.
-- Uses glob.
-- Can do bulk edits without you writing any code.
-- Provides a sane API ([`immutability-helper`](https://github.com/kolodny/immutability-helper#update)) to edit the data in the posts.
+- Can glob.
+- Can do bulk edits without you writing any iterators.
+- Provides a sane API to edit complex shapes of data with ([`immutability-helper`](https://github.com/kolodny/immutability-helper#update))
 - The `remove` method doesn't delete the files, but chugs them into the trash.
 - Exposes `read`, `write`, and `remove` methods to edit individual posts.
 - Is probably fast.
@@ -73,7 +82,7 @@ See [examples](./examples) for more examples.
 
 You've got 4 public methods at your disposal.
 
-### bulkEdit(globPattern, onEach, afterAll, options)
+### bulkEdit(globPattern, onEach[, afterAll, options])
 
 Doesn't return anything, you just do stuff inside the async `onEach` callback.
 
@@ -85,7 +94,7 @@ Uses [glob](https://www.npmjs.com/package/glob).
 
 #### onEach(args)
 
-The function is run on every iteration.
+The function is run on every iteration. It gives you set of handy tools in the args. See below.
 
 ##### args
 
