@@ -32,12 +32,12 @@ const bulkEdit = (globPattern, onEach, afterAll, limit) => {
   const iteratee = async (filePath, index, callback) => {
     try {
       const goods = await read(filePath)
-      const dirname = path.dirname(goods.path)
+      const dirname = path.dirname(filePath)
       const actions = {
         update: target => update(goods, target),
-        save: async (data, path = goods.path) => write(path, data),
-        remove: async (path = goods.path) => remove(path),
-        rename: (newPath, oldPath = goods.path) =>
+        save: async (data, path = filePath) => write(path, data),
+        remove: async (path = filePath) => remove(path),
+        rename: (newPath, oldPath = filePath) =>
           fs.renameSync(getPath(oldPath), path.join(dirname, newPath))
       }
       const args = { goods, actions, index, files }

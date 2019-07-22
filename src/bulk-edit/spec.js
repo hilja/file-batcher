@@ -68,11 +68,9 @@ describe('bulkEdit:', () => {
     })
 
     test('should read other files than markdown if so specified', done => {
-      const onEach = async ({ goods, index }) => {
-        if (index === 0) {
-          // There's only one, so we can rely on the order.
-          expect(goods.path).toEqual(path + '/bar.js')
-        }
+      const onEach = async ({ goods }) => {
+        // There's only one, so we can rely on the order.
+        expect(goods).toEqual('js file :)')
 
         done()
       }

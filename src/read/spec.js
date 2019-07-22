@@ -13,22 +13,38 @@ describe('read:', () => {
     fs.reset()
     mockFiles({
       [path]: {
-        'foo.md': markdown
+        'foo.md': markdown,
+        'bar.md': 'foo'
       }
     })
   })
 
-  it('should read a file and parse its contents into an object', async () => {
+  test('should read a file and parse its contents into an object', async () => {
     const actual = await read(path + '/foo.md')
     const expected = markdownJSON()
 
     expect(actual).toEqual(expected)
   })
 
+  test('should read a non Front Matter file', async () => {
+    const actual = await read(path + '/bar.md')
+    const expected = 'foo'
+
+    expect(actual).toEqual(expected)
+  })
+
   describe('.sync:', () => {
-    it('should read a file and parse its contents into an object', () => {
+    test('should read a file and parse its contents into an object', () => {
       const actual = read.sync(path + '/foo.md')
+      delete actual.orig
       const expected = markdownJSON()
+
+      expect(actual).toEqual(expected)
+    })
+
+    test('should read a non Front Matter file', () => {
+      const actual = read.sync(path + '/bar.md')
+      const expected = 'foo'
 
       expect(actual).toEqual(expected)
     })

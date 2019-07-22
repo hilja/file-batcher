@@ -16,14 +16,20 @@ const read = async (file, options = {}) => {
   const path = getPath(file)
 
   try {
-    const contents = await readFile(path, { ...DEFAULTS, ...options })
-    const contentAsObject = matter(contents)
+    const rawContents = await readFile(path, { ...DEFAULTS, ...options })
+    const isFrontMatter = matter.test(rawContents)
+
+    if (!isFrontMatter) {
+      return rawContents
+    }
+
+    const content = matter(rawContents)
 
     // The `matter.read()` method adds the path to the object, but we're not
     // using it, so let's add it.
-    contentAsObject.path = path
+    content.path = path
 
-    return contentAsObject
+    return content
   } catch (error) {
     console.error(error)
   }
@@ -40,14 +46,20 @@ const readSync = (file, options = {}) => {
   const path = getPath(file)
 
   try {
-    const contents = fs.readFileSync(path, { ...DEFAULTS, ...options })
-    const contentAsObject = matter(contents)
+    const rawContents = fs.readFileSync(path, { ...DEFAULTS, ...options })
+    const isFrontMatter = matter.test(rawContents)
+
+    if (!isFrontMatter) {
+      return rawContents
+    }
+
+    const content = matter(rawContents)
 
     // The `matter.read()` method adds the path to the object, but we're not
     // using it, so let's add it.
-    contentAsObject.path = path
+    content.path = path
 
-    return matter.read(path, options)
+    return content
   } catch (error) {
     console.error(error)
   }
