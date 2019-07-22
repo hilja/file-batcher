@@ -4,8 +4,8 @@ A slightly opinionated tool to batch process large quantities of files asynchron
 
 It could be used for, for example, right at the top my head, to:
 
-- Search and replace from multiple files.
-- To rename a large quantities of files.
+- Search and replace in multiple files.
+- To rename large quantities of files.
 - Find unused packages by scanning source files.
 - Reformatting chunks of text.
 - Analyzing the readability of text in blog posts.
@@ -96,17 +96,15 @@ Uses [glob](https://www.npmjs.com/package/glob).
 
 The function is run on every iteration. It gives you set of handy tools in the args. See below.
 
-##### args
+**args**
 
 Type: `object`
 
-##### args.goods
+**args.goods**
 
-Type: `object`
+Type: `object|any`
 
-The object from the iterated file, provided by [gray-matter](https://www.npmjs.com/package/gray-matter).
-
-It has the following shape:
+If the target file is Gray Matter, then `goods` will be an object provided by [gray-matter](https://www.npmjs.com/package/gray-matter), with a following shape:
 
 ```
 {
@@ -122,19 +120,21 @@ It has the following shape:
 }
 ```
 
-##### args.actions
+If the file is not Front Matter file, then `goods` will be the file contents verbatim.
+
+**args.actions**
 
 Type: `object`
 
 Actions has all the tools you need to edit/save the files.
 
-###### args.actions.update
+#### args.actions.update(pattern)\*\*
 
 Type: `function`
 
 This is a prepopulated [`immutability-helper`](https://github.com/kolodny/immutability-helper#update). It's just a tool that provides a syntax for editing complex shapes. Using it is completely optional.
 
-You can use it inside the callback like so:
+The syntax is like so:
 
 ```js
 const newData = update({
@@ -144,7 +144,7 @@ const newData = update({
 
 See more [advanced examples in the `immutability-helper` docs](https://github.com/kolodny/immutability-helper#update).
 
-###### args.actions.index
+**args.actions.index**
 
 Type: `number`
 
@@ -152,9 +152,9 @@ Type: `number`
 
 Type: `function`
 
-Saves the file in the current iteration, with the modified data, or whatever.
+Saves the currently iterated file, with the modified data, or whatever is passed to it. See the [`write`](#writepath-data-options) method for more info.
 
-####### data
+**data**
 
 Type: `object`
 
@@ -170,7 +170,7 @@ goods.data.name = capitalize(goods.data.name)
 await save(goods)
 ```
 
-####### path
+**path**
 
 Type: `string`
 
@@ -182,7 +182,7 @@ Type: `function` Returns: `Promise`
 
 This one doesn't actually delete anything, but moves it to your computers Trash.
 
-####### Path
+**path**
 
 Type: `string`
 
@@ -245,7 +245,7 @@ Options to pass to the underlying library [`trash`](https://www.npmjs.com/packag
 
 ### write(path, data[, options])
 
-An asynchronous function that takes some data and writes it into a file. If the data looks like it's meant to be parsed into a Front Matter, then it is. E.g. it has a shape: `{ content: '', data: {} }`.
+An asynchronous function that takes some data and writes it into a file. If the data looks like it's meant to be parsed into a Front Matter, then it will be parsed into Front Matter. E.g. it has a shape: `{ content: '', data: {} }`.
 
 #### path
 
