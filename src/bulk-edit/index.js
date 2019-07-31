@@ -16,7 +16,7 @@ const remove = require('../remove')
  * @param {string} globPattern A glop pattern. Uses [`glob`]{@link https://npmjs.com/package/glob}.
  * @param {function} onEach A iterator function to run on each item.
  * @param {function} afterAll A function to execute after the loop has finished.
- * @param {int} limit Limit the concurrent runs fn the async iterator.
+ * @param {int} limit Limit the concurrent runs in the async iterator.
  */
 const bulkEdit = (globPattern, onEach, afterAll, limit) => {
   if (!globPattern) {
@@ -40,7 +40,7 @@ const bulkEdit = (globPattern, onEach, afterAll, limit) => {
         rename: (newPath, oldPath = filePath) =>
           fs.renameSync(getPath(oldPath), path.join(dirname, newPath))
       }
-      const args = { goods, actions, index, files }
+      const args = { goods, actions, index, files, throttle }
 
       return callback(null, await onEach(args))
     } catch (error) {
@@ -74,5 +74,10 @@ const bulkEdit = (globPattern, onEach, afterAll, limit) => {
 }
 
 const _isFile = path => fs.lstatSync(path).isFile()
+
+const throttle = async time =>
+  new Promise(resolve => {
+    setTimeout(() => resolve(), time)
+  })
 
 module.exports = bulkEdit
