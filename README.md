@@ -49,7 +49,6 @@ We can edit them like so:
 ```js
 import { bulkEdit } from 'file-batcher'
 
-// The iterator function
 const onEach = async ({ goods, actions }) => {
   const { author } = goods.data
   const { update, save } = actions
@@ -63,16 +62,16 @@ const onEach = async ({ goods, actions }) => {
     data: { author: { $set: 'Slartibartfast' } }
   })
 
-  // At the end you can save your post with the new data
+  // At the end you can save your post with the new data.
   await save(newData)
 
   console.log('Just saved:', goods.path)
 }
 
-// This runs at the end
+// This runs at the end.
 const afterAll = () => console.log('All done!')
 
-// You can limit how much the async functions churns with the last param
+// You can limit how much the async functions churns with the last param.
 bulkEdit('fixtures/test-content/**', onEach, afterAll, 5)
 ```
 
@@ -82,9 +81,9 @@ See [examples](./examples) for more examples.
 
 You've got 4 public methods at your disposal.
 
-### bulkEdit(globPattern, onEach[, afterAll, options])
+### bulkEdit(globPattern, onEach[, afterAll, limit])
 
-Doesn't return anything, you just do stuff inside the async `onEach` callback.
+Doesn't return anything, does stuff inside the async `onEach` callback.
 
 #### globPattern
 
@@ -94,7 +93,7 @@ Uses [glob](https://www.npmjs.com/package/glob).
 
 #### onEach(args)
 
-The function is run on every iteration. It gives you set of handy tools in the args. See below.
+The function that runs on every iteration. It provides you set of handy tools in the args. See below.
 
 **args**
 
@@ -120,7 +119,7 @@ If the target file is Gray Matter, then `goods` will be an object provided by [g
 }
 ```
 
-If the file is not Front Matter file, then `goods` will be the file contents verbatim.
+If the file is not Front Matter, then `goods` will be the file contents verbatim.
 
 **args.actions**
 
@@ -128,13 +127,13 @@ Type: `object`
 
 Actions has all the tools you need to edit/save the files.
 
-#### args.actions.update(pattern)\*\*
+#### args.actions.update(pattern)
 
 Type: `function`
 
 This is a prepopulated [`immutability-helper`](https://github.com/kolodny/immutability-helper#update). It's just a tool that provides a syntax for editing complex shapes. Using it is completely optional.
 
-The syntax is like so:
+The syntax:
 
 ```js
 const newData = update({
@@ -144,15 +143,11 @@ const newData = update({
 
 See more [advanced examples in the `immutability-helper` docs](https://github.com/kolodny/immutability-helper#update).
 
-**args.actions.index**
-
-Type: `number`
-
-###### args.actions.save(data[, path])
+#### args.actions.save(data[, path])
 
 Type: `function`
 
-Saves the currently iterated file, with the modified data, or whatever is passed to it. See the [`write`](#writepath-data-options) method for more info.
+Saves the currently iterated file with the data passed to it. See the [`write`](#writepath-data-options) method for more info.
 
 **data**
 
@@ -163,6 +158,7 @@ The data to save, in the [upper-mentioned shape](#argsgoods).
 Example:
 
 ```js
+// Inside `forEach`
 const capitalize = string => string[0].toUpperCase() + string.substring(1)
 
 goods.data.name = capitalize(goods.data.name)
@@ -170,23 +166,27 @@ goods.data.name = capitalize(goods.data.name)
 await save(goods)
 ```
 
-**path**
+**path?**
 
 Type: `string`
 
 This helper function is prepopulated with with the current file, so, if you're operating on that file, you don't need to pass in a path. You can, tho, if you want to save it to a new location.
 
-###### args.actions.remove(path?)
+#### args.actions.remove(path?)
 
-Type: `function` Returns: `Promise`
+Type: `function`<br> Returns: `Promise`
 
 This one doesn't actually delete anything, but moves it to your computers Trash.
 
-**path**
+**path?**
 
 Type: `string`
 
 It's prepopulated with the current file, so use this param only if you want to delete another file, that isn't the one in the iteration.
+
+#### args.index
+
+Type: `number`
 
 #### args.files
 
@@ -194,11 +194,28 @@ Type: `array`
 
 The original array of files we're looping over.
 
+#### args.throttle(time)
+
+Type: `function`<br> Return: `Promise`
+
+Throttles the current iteration, good if you're using an API with a strict requests per minute limit.
+
+Example:
+
+```js
+const forEach = ({ throttle }) => {
+  // Make only 20 calls per minute.
+  await throttle(3000)
+  // Call your API or whatever.
+  const data = fetch('https://example.com/rpm-limited-api')
+}
+```
+
 ### read(file)
 
 Returns: `Promise<object>`
 
-Reads in a file asynchronously and returns it's contents. If it's a markdown file, it parses the Frontmatter in it and returns us the the familiar shape:
+Reads a file asynchronously and returns its contents. If it's a markdown file, it'll parse the Frontmatter in it, and will return the the familiar shape:
 
 ```
 {
@@ -213,7 +230,7 @@ Reads in a file asynchronously and returns it's contents. If it's a markdown fil
 }
 ```
 
-#### file
+**file**
 
 Type: `string`
 
@@ -223,7 +240,7 @@ A path to a file. Relative to the current working directory.
 
 Returns: `object`
 
-Same the [async read method](readfile) but sync. Expect that there is `orig` which contains the file as a buffer. The async read method doesn't have that.
+Same the [async read method](readfile) but sync.
 
 ### remove(path[, options])
 
@@ -231,13 +248,13 @@ Returns: `Promise`
 
 Moves a given file into your computers trash, where you can then recover it, if you so like.
 
-#### path
+**path**
 
 Type: `string`
 
 A path to a file. Relative to the current working directory.
 
-#### options?
+**options?**
 
 Type: `object`
 
@@ -247,28 +264,32 @@ Options to pass to the underlying library [`trash`](https://www.npmjs.com/packag
 
 An asynchronous function that takes some data and writes it into a file. If the data looks like it's meant to be parsed into a Front Matter, then it will be parsed into Front Matter. E.g. it has a shape: `{ content: '', data: {} }`.
 
-#### path
+**path**
 
 Type: `string`
 
 Where to write the data. Relative to the current working directory.
 
-#### data
+**data**
 
 Type: `object|any`
 
 If it's an object that has `data` and `content` in it, then it's parsed into Front Matter. Otherwise it's just written into the file as is.
 
-#### options.writeFile
+**options.writeFile?**
 
 Type: `object`
 
 Options to pass to Node's [`fs.readFile`](https://nodejs.org/api/fs.html#fs_fs_readfile_path_options_callback).
 
-#### options.stringify
+**options.stringify?**
 
 Options to pass to [`gray-matter`'s `stringify` method](https://www.npmjs.com/package/gray-matter#stringify).
 
 ### write.sync(path, data[, options])
 
 Same as `write` but synchronous.
+
+## Similar packages
+
+If you need something more generic and with more API, then [Gulp](https://github.com/gulpjs/gulp) is you thing probably.
