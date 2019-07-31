@@ -40,7 +40,10 @@ const bulkEdit = (globPattern, onEach, afterAll, limit) => {
         rename: (newPath, oldPath = filePath) =>
           fs.renameSync(getPath(oldPath), path.join(dirname, newPath))
       }
-      const args = { goods, actions, index, files, throttle }
+
+      // Calling `callback` with `false` cancels everything.
+      const done = () => callback(false) // eslint-disable-line
+      const args = { goods, actions, index, files, throttle, done }
 
       return callback(null, await onEach(args))
     } catch (error) {
