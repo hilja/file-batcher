@@ -13,13 +13,13 @@ const remove = require('../remove')
  * Take a glob patterns  and iterates over an array of paths, executing the
  * asynchronous `onEach` function on every iteration.
  *
- * @param {string} globPattern A glop pattern. Uses [`glob`]{@link https://npmjs.com/package/glob}.
+ * @param {string|array} input A glop pattern or an array of files. Uses [`glob`]{@link https://npmjs.com/package/glob}.
  * @param {function} onEach A iterator function to run on each item.
  * @param {function} afterAll A function to execute after the loop has finished.
  * @param {int} limit Limit the concurrent runs in the async iterator.
  */
-const bulkEdit = (globPattern, onEach, afterAll, limit) => {
-  if (!globPattern) {
+const bulkEdit = (input, onEach, afterAll, limit) => {
+  if (!input) {
     return
   }
 
@@ -27,7 +27,9 @@ const bulkEdit = (globPattern, onEach, afterAll, limit) => {
     throw new Error('The onEach callback must be a function')
   }
 
-  const files = glob.sync(getPath(globPattern)).filter(_isFile)
+  const files = Array.isArray(input)
+    ? input.map(getPath).filter(_isFile)
+    : glob.sync(getPath(input)).filter(_isFile)
 
   const iteratee = async (filePath, index, callback) => {
     try {

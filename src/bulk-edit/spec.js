@@ -1,19 +1,24 @@
 const fs = require('fs')
-const nodePath = require('path')
-const { path, path2, markdown, markdownJSON } = require('../../fixtures/shapes')
+const path = require('path')
+const {
+  path: mockPath,
+  path2: mockPath2,
+  markdown,
+  markdownJSON
+} = require('../../fixtures/shapes')
 const createFiles = require('../../fixtures/create-files')
 const bulkEdit = require('./')
 
 jest.mock('fs', () => new (require('metro-memory-fs'))())
 
-// Populate the `createFiles` with the mocked `fs`
+// Populate the `createFiles` with the mocked `fs`.
 const mockFiles = createFiles(fs)
 
 describe('bulkEdit:', () => {
   beforeEach(() => {
     fs.reset()
     mockFiles({
-      [path]: {
+      [mockPath]: {
         'foo.md': markdown,
         'bar.md': markdown,
         'baz.txt': 'foo',
@@ -21,7 +26,7 @@ describe('bulkEdit:', () => {
         'bar-md': markdown,
         'bar.js': 'js file :)'
       },
-      [path2]: {
+      [mockPath2]: {
         'foo.md': markdown,
         'bar.md': markdown
       }
@@ -32,9 +37,9 @@ describe('bulkEdit:', () => {
     expect(bulkEdit()).toBeUndefined()
   })
 
-  test('should throw if now `onEach` callback was given', () => {
+  test('should throw if no `onEach` callback was given', () => {
     expect(() => {
-      bulkEdit(path + '/*')
+      bulkEdit('foo/path/*')
     }).toThrow()
   })
 
@@ -48,7 +53,7 @@ describe('bulkEdit:', () => {
         done()
       }
 
-      bulkEdit(path + '/*', onEach, undefined, 1)
+      bulkEdit(mockPath + '/*', onEach, undefined, 1)
     })
 
     test('should contain the data from the iterated file', done => {
@@ -56,15 +61,40 @@ describe('bulkEdit:', () => {
         // Nuke the buffer for now. Maybe have tests for it.
         delete goods.orig
 
+        // Have to check the index here because they're not run in order,
+        // because it's async even tho the limit is 1.
         if (index === 0) {
-          // They don't run in order.
-          expect(goods).toEqual(markdownJSON(nodePath.basename(goods.path)))
+          expect(goods).toEqual(markdownJSON(path.basename(goods.path)))
         }
 
         done()
       }
 
-      bulkEdit(path + '/*', onEach, undefined, 1)
+      bulkEdit(mockPath + '/*', onEach, undefined, 1)
+    })
+
+    test('should contain the data from the iterated file if array of paths was given', done => {
+      const arrayInput = [
+        path.join(mockPath, 'foo.md'),
+        path.join(mockPath, 'bar.md')
+      ]
+
+      const onEach = async ({ goods, index }) => {
+        // Nuke the buffer for now. Maybe have tests for it.
+        delete goods.orig
+
+        if (index === 0) {
+          expect(goods).toEqual(markdownJSON(path.basename(goods.path)))
+        }
+
+        if (index === 1) {
+          expect(goods).toEqual(markdownJSON(path.basename(goods.path)))
+        }
+
+        done()
+      }
+
+      bulkEdit(arrayInput, onEach, undefined, 1)
     })
 
     test('should read other files than markdown if so specified', done => {
@@ -75,7 +105,7 @@ describe('bulkEdit:', () => {
         done()
       }
 
-      bulkEdit(path + '/*.js', onEach, undefined, 1)
+      bulkEdit(mockPath + '/*.js', onEach, undefined, 1)
     })
 
     test.todo('Test all the actions inside the callback.')
@@ -94,7 +124,7 @@ describe('bulkEdit:', () => {
         }
       }
 
-      bulkEdit(path + '/*', onEach, undefined, 1)
+      bulkEdit(mockPath + '/*', onEach, undefined, 1)
     })
   })
 
@@ -105,14 +135,15 @@ describe('bulkEdit:', () => {
       const onEach = () => {}
 
       const afterAll = () => {
-        // Uh, I just want to know if thi was called, it doesn't return anything
-        // to test with.
+        // Uh, I just want to know if this was called, it doesn't return
+        // anything to test with, so I'll just set this to true to have an ide
+        // if this piece of code was ever reached.
         foo = true
         expect(foo).toBeTruthy()
         done()
       }
 
-      bulkEdit(path + '/*', onEach, afterAll, 1)
+      bulkEdit(mockPath + '/*', onEach, afterAll, 1)
     })
   })
 })
