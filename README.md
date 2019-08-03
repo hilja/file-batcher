@@ -81,19 +81,19 @@ See [examples](./examples) for more examples.
 
 You've got 4 public methods at your disposal.
 
-### bulkEdit(globPattern, onEach[, afterAll, limit])
+### bulkEdit(input, onEach[, afterAll, limit])
 
 Doesn't return anything, does stuff inside the async `onEach` callback.
 
 #### globPattern
 
-Type: `string`
+Type: `string|array`
 
-Uses [glob](https://www.npmjs.com/package/glob).
+If string, it uses uses [glob](https://www.npmjs.com/package/glob). Or pass an array of file paths, relative to the current working directory.
 
 #### onEach(args)
 
-The function that runs on every iteration. It provides you set of handy tools in the args. See below.
+The function that runs on every iteration. It provides you a set of handy tools in the args. See below.
 
 **args**
 
