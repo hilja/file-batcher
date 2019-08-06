@@ -1,3 +1,4 @@
+/* eslint standard/no-callback-literal: "off" */
 const fs = require('fs')
 const path = require('path')
 const update = require('immutability-helper')
@@ -10,7 +11,7 @@ const getPath = require('../../helpers/get-path')
 const remove = require('../remove')
 
 /**
- * Take a glob patterns  and iterates over an array of paths, executing the
+ * Take a glob patterns and iterates over an array of paths, executing the
  * asynchronous `onEach` function on every iteration.
  *
  * @param {string|array} input A glop pattern or an array of files. Uses [`glob`]{@link https://npmjs.com/package/glob}.
@@ -44,7 +45,7 @@ const bulkEdit = (input, onEach, afterAll, limit) => {
       }
 
       // Calling `callback` with `false` cancels everything.
-      const done = () => callback(false) // eslint-disable-line
+      const done = () => callback(false)
       const args = { goods, actions, index, files, throttle, done }
 
       return callback(null, await onEach(args))
@@ -54,7 +55,7 @@ const bulkEdit = (input, onEach, afterAll, limit) => {
   }
 
   // This runs after the map has completed and handles possible errors.
-  const done = error => {
+  const allDone = error => {
     if (error) {
       return console.error(error)
     }
@@ -69,12 +70,12 @@ const bulkEdit = (input, onEach, afterAll, limit) => {
         files,
         limit,
         (path, index, callback) => iteratee(path, index, callback),
-        done
+        allDone
       )
     : eachOf(
         files,
         (path, index, callback) => iteratee(path, index, callback),
-        done
+        allDone
       )
 }
 
