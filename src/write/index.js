@@ -13,6 +13,7 @@ const writeFile = promisify(fs.writeFile)
  * @param {object|any} data What to write. A shape that looks Front Matter is stringified into Front Matter.
  * @param {object|string} options.writeFile Options for `fs.writeFile`
  * @param {object} options.stringify Options for gray-matter's stringify method
+ * @param {object} options.writeFile Options for Node's `writeFile` method
  */
 const write = async (file, data, options = {}) => {
   if (!file) {
