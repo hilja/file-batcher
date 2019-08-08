@@ -33,15 +33,19 @@ const batch = async (input, limit = 1, onEach) => {
 
   try {
     return mapLimit(files, limit, async file => {
+      const dirname = path.dirname(file)
       const actions = {
         update: target => update(goods, target),
-        save: async (data, path = file) => write(path, data),
+        save: async (data, path = file, options) => write(path, data, options),
         remove: async (path = file) => remove(path),
-        rename: (newPath, oldPath = file) =>
-          fs.renameSync(getPath(oldPath), path.join(dirname, newPath)),
+        rename: (newPath, oldPath = file) => {
+          newPath = path.isAbsolute(newPath)
+            ? newPath
+            : path.join(dirname, newPath)
+          fs.renameSync(getPath(oldPath), newPath)
+        },
         mapLimit
       }
-      const dirname = path.dirname(file)
       const goods = await read(file)
       index++
 
