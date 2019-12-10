@@ -1,10 +1,8 @@
-const { bulkEdit } = require('../index')
+const { batch } = require('../index')
 
 const FILE_TO_RENAME = 'fixtures/test-content/articles/test-file-md'
 
-const renameFiles = async ({ actions }) => {
+batch(FILE_TO_RENAME, 1, async ({ actions }) => {
   // Rename the wrongly names file.
   await actions.rename('test-file.md')
-}
-
-bulkEdit(FILE_TO_RENAME, renameFiles)
+})
