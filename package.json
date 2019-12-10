@@ -26,6 +26,7 @@
     "immutability-helper": "^3.0.1",
     "lodash.get": "^4.4.2",
     "metro-memory-fs": "^0.55.0",
+    "p-map": "^3.0.0",
     "trash": "^6.0.0"
   },
   "devDependencies": {
