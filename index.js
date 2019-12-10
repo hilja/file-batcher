@@ -1,4 +1,3 @@
-module.exports.bulkEdit = require('./src/bulk-edit')
 module.exports.batch = require('./src/batch')
 module.exports.read = require('./src/read')
 module.exports.remove = require('./src/remove')
