@@ -36,6 +36,7 @@
     "babel-polyfill": "^6.26.0",
     "clean-slate-lint": "^1.0.9",
     "jest": "^24.8.0",
+    "jest-plugin-fs": "^2.9.0",
     "mkdirp": "^0.5.1"
   },
   "eslintConfig": {
