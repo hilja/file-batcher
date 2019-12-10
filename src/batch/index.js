@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const update = require('immutability-helper')
-const mapLimit = require('async/mapLimit')
+const pMap = require('p-map')
 const glob = require('glob')
 const delay = require('delay')
 const getPath = require('../../helpers/get-path')
@@ -19,38 +19,44 @@ const isFile = path => fs.lstatSync(path).isFile()
  * @param {int|Infinity} limit Limit the concurrent run of the async iterator.
  * @param {function} onEach A function to execute of each iteration.
  */
-const batch = async (input, limit = 1, onEach) => {
-  if (typeof onEach !== 'function') {
-    throw new Error('The onEach callback must be a function')
+const batch = async (input, limit = Infinity, onEach) => {
+  if (typeof input === 'undefined') {
+    return undefined
   }
 
   const files = Array.isArray(input)
     ? input.map(getPath).filter(isFile)
     : glob.sync(getPath(input)).filter(isFile)
-  let index = 0
+  const options = { concurrency: limit }
 
   try {
-    return mapLimit(files, limit, async file => {
-      const dirname = path.dirname(file)
-      const actions = {
-        update: target => update(goods, target),
-        save: async (data, path = file, options) => write(path, data, options),
-        remove: async (path = file) => remove(path),
-        rename: (newPath, oldPath = file) => {
-          newPath = path.isAbsolute(newPath)
-            ? newPath
-            : path.join(dirname, newPath)
-          fs.renameSync(getPath(oldPath), newPath)
-        },
-        mapLimit
-      }
-      const goods = await read(file)
-      index++
+    return pMap(
+      files,
+      async (file, index) => {
+        const dirname = path.dirname(file)
+        const actions = {
+          update: target => update(goods, target),
+          save: async (data, path = file, options) =>
+            write(path, data, options),
+          remove: async (path = file) => remove(path),
+          rename: (newPath, oldPath = file) => {
+            newPath = path.isAbsolute(newPath)
+              ? newPath
+              : path.join(dirname, newPath)
+            fs.renameSync(getPath(oldPath), newPath)
+          },
+          pMap
+        }
+        const goods = await read(file)
 
-      return onEach({ actions, files, goods, index, delay })
-    })
+        return typeof onEach === 'function'
+          ? onEach({ actions, files, goods, index, delay })
+          : goods
+      },
+      options
+    )
   } catch (error) {
-    console.error(error)
+    throw new Error(error)
   }
 }
 
