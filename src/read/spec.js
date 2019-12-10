@@ -32,21 +32,4 @@ describe('read:', () => {
 
     expect(actual).toEqual(expected)
   })
-
-  describe('.sync:', () => {
-    test('should read a file and parse its contents into an object', () => {
-      const actual = read.sync(path + '/foo.md')
-      delete actual.orig
-      const expected = markdownJSON()
-
-      expect(actual).toEqual(expected)
-    })
-
-    test('should read a non Front Matter file', () => {
-      const actual = read.sync(path + '/bar.md')
-      const expected = 'foo'
-
-      expect(actual).toEqual(expected)
-    })
-  })
 })
