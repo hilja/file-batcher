@@ -3,15 +3,13 @@ const path = require('path')
 const update = require('immutability-helper')
 const mapLimit = require('async/mapLimit')
 const glob = require('glob')
+const delay = require('delay')
 const getPath = require('../../helpers/get-path')
 const read = require('../read')
 const remove = require('../remove')
 const write = require('../write')
 
 const isFile = path => fs.lstatSync(path).isFile()
-
-const sleep = async time =>
-  new Promise(resolve => setTimeout(() => resolve(), time))
 
 /**
  * Takes a glob patterns or an array of paths and asynchronously iterates it
@@ -49,7 +47,7 @@ const batch = async (input, limit = 1, onEach) => {
       const goods = await read(file)
       index++
 
-      return onEach({ actions, files, goods, index, sleep })
+      return onEach({ actions, files, goods, index, delay })
     })
   } catch (error) {
     console.error(error)
