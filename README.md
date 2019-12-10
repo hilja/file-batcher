@@ -1,14 +1,15 @@
 # File Batcher
 
-A slightly opinionated tool to batch process large quantities of files asynchronously. It provides you some convenient tools to edit Front Matter fueled Markdown files (the stuff that most static site generators use). But it's not limited to any given filetype or format.
+A slightly opinionated tool to batch process large quantities of files asynchronously. It provides you some convenient tools to edit Front Matter fueled Markdown files (the stuff that most static site generators use). But it’s not limited to any given filetype or format.
 
 It could be used for, for example, right at the top my head, to:
 
-- Search and replace in multiple files.
+- Search and replace text in multiple files.
 - To rename large quantities of files.
 - Find unused packages by scanning source files.
 - Reformatting chunks of text.
 - Analyzing the readability of text in blog posts.
+- Minifying files attached to blog posts.
 - Whatever you want, world is your oyster...
 
 ## Features
@@ -17,10 +18,9 @@ It could be used for, for example, right at the top my head, to:
 - Can glob.
 - Can do bulk edits without you writing any iterators.
 - Provides a sane API to edit complex shapes of data with ([`immutability-helper`](https://github.com/kolodny/immutability-helper#update))
-- The `remove` method doesn't delete the files, but chugs them into the trash.
+- The `remove` method doesn’t delete the files, but chugs them into the trash.
 - Exposes `read`, `write`, and `remove` methods to edit individual posts.
 - Is probably fast.
-- Is generally a really good package.
 
 ## Install
 
@@ -30,7 +30,7 @@ npm i file-batcher
 
 ## Usage
 
-Imagine that we've got thousands upon thousands of files like this:
+Imagine that we’ve got thousands upon thousands of files like this:
 
 ```yaml
 ---
@@ -47,17 +47,17 @@ Hello!
 We can edit them like so:
 
 ```js
-import { bulkEdit } from 'file-batcher'
+import { batch } from 'file-batcher'
 
-const onEach = async ({ goods, actions }) => {
+// A same limit of 100 concurrent operations.
+batch('fixtures/test-content/**', 100, async ({ goods, actions }) => {
   const { author } = goods.data
   const { update, save } = actions
 
   if (!author) return
 
-  // Update the author name with the provided immutability-helper, it gives
-  // you a nice syntax for updating complex shapes. The update function is
-  // prepopulated with the data (goods) from the post, so you don't have to.
+  // Update the author’s name with the provided immutability-helper. The update
+  // function is prepopulated with the data (`goods`) from the post.
   const newData = update({
     data: { author: { $set: 'Slartibartfast' } }
   })
@@ -66,13 +66,7 @@ const onEach = async ({ goods, actions }) => {
   await save(newData)
 
   console.log('Just saved:', goods.path)
-}
-
-// This runs at the end.
-const afterAll = () => console.log('All done!')
-
-// You can limit how much the async functions churns with the last param.
-bulkEdit('fixtures/test-content/**', onEach, afterAll, 5)
+})
 ```
 
 See [examples](./examples) for more examples.
@@ -81,15 +75,21 @@ See [examples](./examples) for more examples.
 
 You've got 4 public methods at your disposal.
 
-### bulkEdit(input, onEach[, afterAll, limit])
+### batch(input[, limit, onEach])
 
-Doesn't return anything, does stuff inside the async `onEach` callback.
+Return a promise that resolves to an array with the parsed Front Matter.
 
-#### globPattern
+#### input
 
 Type: `string|array`
 
-If string, it uses uses [glob](https://www.npmjs.com/package/glob). Or pass an array of file paths, relative to the current working directory.
+If string, it uses uses [glob](https://www.npmjs.com/package/glob). Or an array of file paths, relative to the current working directory.
+
+#### limit
+
+Type: `string|array`<br> Default: `Infinite`
+
+The concurrency.
 
 #### onEach(args)
 
@@ -158,7 +158,7 @@ The data to save, in the [upper-mentioned shape](#argsgoods).
 Example:
 
 ```js
-// Inside `forEach`
+// Inside the `onEach`.
 const capitalize = string => string[0].toUpperCase() + string.substring(1)
 
 goods.data.name = capitalize(goods.data.name)
@@ -170,7 +170,7 @@ await save(goods)
 
 Type: `string`
 
-This helper function is prepopulated with with the current file, so, if you're operating on that file, you don't need to pass in a path. You can, tho, if you want to save it to a new location.
+This helper function is prepopulated with with the current file, so, if you’re operating on that file, you don’t need to pass in a path. You can, tho, if you want to save it to a new location.
 
 #### args.actions.remove(path?)
 
@@ -182,7 +182,7 @@ This one doesn't actually delete anything, but moves it to your computers Trash.
 
 Type: `string`
 
-It's prepopulated with the current file, so use this param only if you want to delete another file, that isn't the one in the iteration.
+It’s prepopulated with the current file, so use this param only if you want to delete another file, that isn’t the one in the iteration.
 
 #### args.index
 
@@ -192,20 +192,22 @@ Type: `number`
 
 Type: `array`
 
-The original array of files we're looping over.
+The original array of files we’re looping over.
 
-#### args.throttle(time)
+#### delay(milliseconds[, options])
 
 Type: `function`<br> Return: `Promise`
 
-Throttles the current iteration, good if you're using an API with a strict requests per minute limit.
+See (delay)[https://github.com/sindresorhus/delay].
+
+Throttles the current iteration, good if you’re using a constructed API.
 
 Example:
 
 ```js
-const forEach = ({ throttle }) => {
+const onEach = ({ throttle }) => {
   // Make only 20 calls per minute.
-  await throttle(3000)
+  await delay(3000)
   // Call your API or whatever.
   const data = fetch('https://example.com/rpm-limited-api')
 }
@@ -215,7 +217,7 @@ const forEach = ({ throttle }) => {
 
 Returns: `Promise<object>`
 
-Reads a file asynchronously and returns its contents. If it's a markdown file, it'll parse the Frontmatter in it, and will return the the familiar shape:
+Reads a file asynchronously and returns its contents. If it’s a markdown file, the Frontmatter will be parsed and it will return the the following shape:
 
 ```
 {
@@ -235,12 +237,6 @@ Reads a file asynchronously and returns its contents. If it's a markdown file, i
 Type: `string`
 
 A path to a file. Relative to the current working directory.
-
-### read.sync(file)
-
-Returns: `object`
-
-Same the [async read method](readfile) but sync.
 
 ### remove(path[, options])
 
@@ -286,10 +282,6 @@ Options to pass to Node's [`fs.readFile`](https://nodejs.org/api/fs.html#fs_fs_r
 
 Options to pass to [`gray-matter`'s `stringify` method](https://www.npmjs.com/package/gray-matter#stringify).
 
-### write.sync(path, data[, options])
-
-Same as `write` but synchronous.
-
 ## Similar packages
 
-If you need something more generic and with more API, then [Gulp](https://github.com/gulpjs/gulp) is you thing probably.
+If you need something more generic and with more API, then [Gulp](https://github.com/gulpjs/gulp) might be your thing.
