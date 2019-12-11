@@ -35,6 +35,7 @@ const batch = async (input, limit = Infinity, onEach) => {
       files,
       async (file, index) => {
         const dirname = path.dirname(file)
+        const goods = await read(file)
         const actions = {
           update: target => update(goods, target),
           save: async (data, path = file, options) =>
@@ -48,7 +49,6 @@ const batch = async (input, limit = Infinity, onEach) => {
           },
           pMap
         }
-        const goods = await read(file)
 
         return typeof onEach === 'function'
           ? onEach({ actions, files, goods, index, delay })
