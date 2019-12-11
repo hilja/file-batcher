@@ -1,23 +1,19 @@
-const fs = require('fs')
+import fs from 'jest-plugin-fs'
 const read = require('.')
 const { path, markdown, markdownJSON } = require('../../fixtures/shapes')
-const createFiles = require('../../fixtures/create-files')
 
-jest.mock('fs', () => new (require('metro-memory-fs'))())
-
-// Populate the `createFiles` with the mocked `fs`
-const mockFiles = createFiles(fs)
+jest.mock('fs', () => require('jest-plugin-fs/mock'))
 
 describe('read:', () => {
   beforeEach(() => {
-    fs.reset()
-    mockFiles({
+    fs.mock({
       [path]: {
         'foo.md': markdown,
         'bar.md': 'foo'
       }
     })
   })
+  afterEach(() => fs.restore())
 
   test('should read a file and parse its contents into an object', async () => {
     const actual = await read(path + '/foo.md')

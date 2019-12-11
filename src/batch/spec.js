@@ -14,6 +14,7 @@ const nonMarkdownFiles = mockPath + '/*.js'
 
 describe('batch', () => {
   beforeEach(() => {
+    fs.restore()
     fs.mock({
       [mockPath]: {
         'foo.md': markdown,
@@ -97,9 +98,8 @@ describe('batch', () => {
 
       if (index === 1) {
         expect(goods).toEqual(markdownJSON(path.basename(goods.path)))
+        done()
       }
-
-      done()
     })
   })
 

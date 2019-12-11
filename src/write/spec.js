@@ -1,10 +1,10 @@
-const write = require('./')
+import fs from 'jest-plugin-fs'
+const nfs = require('fs')
 const path = require('path')
-const fs = require('fs')
 const { path: mockPath, markdown } = require('../../fixtures/shapes')
-const createFiles = require('../../fixtures/create-files')
+const write = require('./')
 
-jest.mock('fs', () => new (require('metro-memory-fs'))())
+jest.mock('fs', () => require('jest-plugin-fs/mock'))
 
 const FRONT_MATTER_OBJECT = {
   content: 'Hello\n',
@@ -15,20 +15,17 @@ const FRONT_MATTER_OBJECT = {
   }
 }
 
-// Populate the `createFiles` with the mocked `fs`
-const mockFiles = createFiles(fs)
 const filePath = path.join(mockPath, 'foo.md')
 
 describe('write:', () => {
-  beforeEach(() => {
-    fs.reset()
-    mockFiles({ [mockPath]: {} })
-  })
+  // Write an empty file.
+  beforeEach(() => fs.mock({ [mockPath]: '' }))
+  afterEach(() => fs.restore())
 
   test('should write JSON into a markdown file', async () => {
     await write(filePath, FRONT_MATTER_OBJECT)
 
-    const actual = fs.readFileSync(filePath, 'utf8')
+    const actual = nfs.readFileSync(filePath, 'utf8')
     const expected = markdown
 
     expect(actual).toBe(expected)
@@ -36,28 +33,10 @@ describe('write:', () => {
 
   test('should write non Front Matter data into file as is', async () => {
     await write(filePath, 'foo')
-    const actual = fs.readFileSync(filePath, 'utf8')
+
+    const actual = nfs.readFileSync(filePath, 'utf8')
     const expected = 'foo'
 
     expect(actual).toBe(expected)
-  })
-
-  describe('write.sync:', () => {
-    test('should parse an object into Front Matter and write it to a file', () => {
-      write.sync(filePath, FRONT_MATTER_OBJECT)
-
-      const actual = fs.readFileSync(filePath, 'utf8')
-      const expected = markdown
-
-      expect(actual).toBe(expected)
-    })
-
-    test('should write non Front Matter data into file as is', () => {
-      write.sync(filePath, 'foo')
-      const actual = fs.readFileSync(filePath, 'utf8')
-      const expected = 'foo'
-
-      expect(actual).toBe(expected)
-    })
   })
 })
