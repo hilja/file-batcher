@@ -8,8 +8,9 @@ const readFile = promisify(fs.readFile)
 /**
  * Reads the contents of a markdown file asynchronously.
  *
- * @param {string} file Where to read the data from
- * @param {object} options Options for `fs.readFile`
+ * @param {String} file Where to read the data from
+ * @param {Object} options Options for `fs.readFile`
+ * @returns {Promise{}}
  */
 const read = async (file, options = {}) => {
   const DEFAULTS = { encoding: 'utf8' }
@@ -32,7 +33,7 @@ const read = async (file, options = {}) => {
 
     return content
   } catch (error) {
-    console.error(error)
+    throw new Error(error)
   }
 }
 

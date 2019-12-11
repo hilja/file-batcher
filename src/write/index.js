@@ -9,11 +9,11 @@ const writeFile = promisify(fs.writeFile)
 /**
  * Writes asynchronously JSON into a markdown file.
  *
- * @param {string} file Where to write.
- * @param {object|any} data What to write. A shape that looks Front Matter is stringified into Front Matter.
- * @param {object|string} options.writeFile Options for `fs.writeFile`
- * @param {object} options.stringify Options for gray-matter's stringify method
- * @param {object} options.writeFile Options for Node's `writeFile` method
+ * @param {String} file File path to write.
+ * @param {Object|any} data What to write. A shape that looks Front Matter is stringified into Front Matter.
+ * @param {Object|String} options.writeFile Options for `fs.writeFile`.
+ * @param {Object} options.stringify Options for gray-matter's stringify method.
+ * @param {Object} options.writeFile Options for Node’s `writeFile` method.
  */
 const write = async (file, data, options = {}) => {
   if (!file) {
@@ -23,41 +23,13 @@ const write = async (file, data, options = {}) => {
   const path = getPath(file)
   const opts = _getOptions(options)
 
-  // If data looks like data Front Matter type of data, then stringify on it.
+  // If the data looks like Front Matter, then stringify it.
   if (_looksLikeFrontMatter(data)) {
     data = _stringify(data, opts.stringify)
   }
 
   try {
     await writeFile(path, data, opts.writeFile)
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-/**
- * Writes synchronously JSON into a markdown file.
- *
- * @param {string} file Where to write.
- * @param {object|any} data What to write. A shape that looks Front Matter is stringified into Front Matter.
- * @param {object|string} options.writeFile Options for `fs.writeFile`
- * @param {object} options.stringify Options for gray-matter's stringify method
- */
-const writeSync = (file, data, options = {}) => {
-  if (!file) {
-    return
-  }
-
-  const path = getPath(file)
-  const opts = _getOptions(options)
-
-  // If data looks like data Front Matter type of data, then stringify on it.
-  if (_looksLikeFrontMatter(data)) {
-    data = _stringify(data, opts.stringify)
-  }
-
-  try {
-    fs.writeFileSync(path, data, opts.writeFile)
   } catch (error) {
     console.error(error)
   }
@@ -79,4 +51,3 @@ const _getOptions = options => ({
 })
 
 module.exports = write
-module.exports.sync = writeSync

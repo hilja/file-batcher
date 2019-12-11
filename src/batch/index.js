@@ -15,9 +15,10 @@ const isFile = path => fs.lstatSync(path).isFile()
  * Takes a glob patterns or an array of paths and asynchronously iterates it
  * over, executing the `onEach` function on every run.
  *
- * @param {string|array} input Glob string or an array of file paths.
- * @param {int|Infinity} limit Limit the concurrent run of the async iterator.
- * @param {function} onEach A function to execute of each iteration.
+ * @param {String|String[]} input Glob string or an array of file paths.
+ * @param {Int|Infinity} limit Limit the concurrent run of the async iterator.
+ * @param {Function} onEach A function to execute of each iteration.
+ * @returns {Promise}
  */
 const batch = async (input, limit = Infinity, onEach) => {
   if (typeof input === 'undefined') {
