@@ -21,7 +21,7 @@
   "dependencies": {
     "async": "^3.1.0",
     "delay": "^4.3.0",
-    "glob": "^7.1.4",
+    "glob": "^7.1.6",
     "gray-matter": "^4.0.2",
     "immutability-helper": "^3.0.1",
     "lodash.get": "^4.4.2",
