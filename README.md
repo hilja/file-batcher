@@ -1,8 +1,8 @@
 # File Batcher
 
-A slightly opinionated tool to batch process large quantities of files asynchronously. It provides you some convenient tools to edit Front Matter fueled Markdown files (the stuff that most static site generators use). But it’s not limited to any given filetype or format.
+A tool to batch process large quantities of files asynchronously. It provides you some convenient tools to edit Front Matter fueled Markdown files (the stuff that most static site generators use). But is not limited to any specific filetype or format.
 
-It could be used for, for example, right at the top my head, to:
+It could be used for for example to:
 
 - Search and replace text in multiple files.
 - To rename large quantities of files.
@@ -10,14 +10,13 @@ It could be used for, for example, right at the top my head, to:
 - Reformatting chunks of text.
 - Analyzing the readability of text in blog posts.
 - Minifying files attached to blog posts.
-- Whatever you want, world is your oyster...
 
 ## Features
 
 - Is asynchronous.
 - Can glob.
 - Can do bulk edits without you writing any iterators.
-- Provides a sane API to edit complex shapes of data with ([`immutability-helper`](https://github.com/kolodny/immutability-helper#update))
+- Provides a sane API to edit complex shapes with ([`immutability-helper`](https://github.com/kolodny/immutability-helper#update))
 - The `remove` method doesn’t delete the files, but chugs them into the trash.
 - Exposes `read`, `write`, and `remove` methods to edit individual posts.
 - Is probably fast.
@@ -30,7 +29,7 @@ npm i file-batcher
 
 ## Usage
 
-Imagine that we’ve got thousands upon thousands of files like this:
+Imagine having thousands upon thousands of files like this:
 
 ```yaml
 ---
@@ -49,7 +48,7 @@ We can edit them like so:
 ```js
 import { batch } from 'file-batcher'
 
-// A same limit of 100 concurrent operations.
+// A sane limit of 100 concurrent operations.
 batch('fixtures/test-content/**', 100, async ({ goods, actions }) => {
   const { author } = goods.data
   const { update, save } = actions
@@ -73,7 +72,7 @@ See [examples](./examples) for more examples.
 
 ## API
 
-You've got 4 public methods at your disposal.
+You've got 4 public methods at your disposal: batch, read, remove, and write.
 
 ### batch(input[, limit, onEach])
 
@@ -103,7 +102,7 @@ Type: `object`
 
 Type: `object|any`
 
-If the target file is Gray Matter, then `goods` will be an object provided by [gray-matter](https://www.npmjs.com/package/gray-matter), with a following shape:
+If the target file is Front Matter, then `goods` will be an object provided by [gray-matter](https://www.npmjs.com/package/gray-matter), with a following shape:
 
 ```
 {
@@ -119,7 +118,7 @@ If the target file is Gray Matter, then `goods` will be an object provided by [g
 }
 ```
 
-If the file is not Front Matter, then `goods` will be the file contents verbatim.
+If the file is not Front Matter, then `goods` will be the file’s contents verbatim.
 
 **args.actions**
 
@@ -198,9 +197,9 @@ The original array of files we’re looping over.
 
 Type: `function`<br> Return: `Promise`
 
-See (delay)[https://github.com/sindresorhus/delay].
+See [delay](https://github.com/sindresorhus/delay).
 
-Throttles the current iteration, good if you’re using a constructed API.
+Throttles the current iteration, good if you’re using somehow constricted API.
 
 Example:
 
