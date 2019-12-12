@@ -19,7 +19,6 @@
     "jest": "jest --config=jest.config.js"
   },
   "dependencies": {
-    "async": "^3.1.0",
     "delay": "^4.3.0",
     "glob": "^7.1.6",
     "gray-matter": "^4.0.2",
