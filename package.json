@@ -1,12 +1,16 @@
 {
   "author": "Antti Hilja",
+  "contributors": [{
+    "name":"Stefano Cislaghi",
+    "url":"https://stefanocislaghi.com"
+  }],
   "description": "Asynchronous bulk edit utility for Front Matter powered Markdown files",
-  "license": "ISC",
+  "license": "MIT",
   "main": "index.js",
   "name": "file-batcher",
-  "version": "0.0.1-beta.0",
-  "repository": "https://github.com/hilja/file-batcher",
-  "homepage": "https://github.com/hilja/file-batcher",
+  "version": "1.0.0",
+  "repository": "https://github.com/LunaticMuch/file-batcher",
+  "homepage": "https://github.com/LunaticMuch/file-batcher",
   "keywords": [
     "markdown",
     "front matter",

@@ -284,3 +284,7 @@ Options to pass to [`gray-matter`'s `stringify` method](https://www.npmjs.com/pa
 ## Similar packages
 
 If you need something more generic and with more API, then [Gulp](https://github.com/gulpjs/gulp) might be your thing.
+
+## Original Author
+
+This package has been originally developed by [Hilja](https://github.com/hilja/file-batcher) and later packeged by [Craig Dennis](https://github.com/craigmdennis/). As no activity has been happening recentely and PRs are not getting reviewed and merged, I am resharing it, in the quest to maintain it working and updated.
